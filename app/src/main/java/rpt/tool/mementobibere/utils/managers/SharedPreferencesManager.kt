@@ -105,10 +105,10 @@ object SharedPreferencesManager {
         get() = sharedPreferences.getBoolean(AppUtils.START_TUTORIAL_KEY,false)
         set(value) = sharedPreferences.edit().putBoolean(AppUtils.START_TUTORIAL_KEY, value).apply()
     var gender: Int
-        get() = sharedPreferences.getInt(AppUtils.GENDER_KEY, 0)
+        get() = sharedPreferences.getInt(AppUtils.GENDER_KEY, 1)
         set(value) = sharedPreferences.edit().putInt(AppUtils.GENDER_KEY, value).apply()
     var workType: Int
-        get() = sharedPreferences.getInt(AppUtils.WORK_TIME_KEY, 0)
+        get() = sharedPreferences.getInt(AppUtils.WORK_TIME_KEY, 1)
         set(value) = sharedPreferences.edit().putInt(AppUtils.WORK_TIME_KEY, value).apply()
     var weight: Int
         get() = sharedPreferences.getInt(AppUtils.WEIGHT_KEY, 0)
@@ -141,4 +141,67 @@ object SharedPreferencesManager {
     var indexYear: Int
         get() = sharedPreferences.getInt(AppUtils.INDEX_YEAR_KEY,-1)
         set(value) = sharedPreferences.edit().putInt(AppUtils.INDEX_YEAR_KEY, value).apply()
+    var userName: String
+        get() = sharedPreferences.getString(AppUtils.USER_NAME,"")!!
+        set(value) = sharedPreferences.edit().putString(AppUtils.USER_NAME, value).apply()
+    var setUserName: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.SET_USER_NAME, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SET_USER_NAME, value).apply()
+    var height: String
+        get() = sharedPreferences.getString(AppUtils.HEIGHT,"150")!!
+        set(value) = sharedPreferences.edit().putString(AppUtils.HEIGHT, value).apply()
+    var setHeight: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.SET_HEIGHT, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SET_HEIGHT, value).apply()
+    var ignoreNextStep: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.IGNORE_NEXT_STEP, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.IGNORE_NEXT_STEP, value).apply()
+    var setManualGoal: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.SET_MANUAL_GOAL, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SET_MANUAL_GOAL, value).apply()
+    var isPregnant: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.IS_PREGNANT, true)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.IS_PREGNANT, value).apply()
+    var isBreastfeeding: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.IS_BREAST_FEEDING, true)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.IS_BREAST_FEEDING, value).apply()
+    var personWeight: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.PERSON_WEIGHT, true)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.PERSON_WEIGHT, value).apply()
+    var personHeight: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.PERSON_HEIGHT, true)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.PERSON_HEIGHT, value).apply()
+    var manualIntake: Float
+        get() = sharedPreferences.getFloat(AppUtils.MANUAL_INTAKE_KEY, 0f)
+        set(value) = sharedPreferences.edit().putFloat(AppUtils.MANUAL_INTAKE_KEY, value).apply()
+    var wakeUpTimeHour: Int
+        get() = sharedPreferences.getInt(AppUtils.W_U_H,0)
+        set(value) = sharedPreferences.edit().putInt(AppUtils.W_U_H, value).apply()
+    var wakeUpTimeMins: Int
+        get() = sharedPreferences.getInt(AppUtils.W_U_M,0)
+        set(value) = sharedPreferences.edit().putInt(AppUtils.W_U_M, value).apply()
+    var sleepingTimeHour: Int
+        get() = sharedPreferences.getInt(AppUtils.S_T_H,0)
+        set(value) = sharedPreferences.edit().putInt(AppUtils.S_T_H, value).apply()
+    var sleepingTimeMins: Int
+        get() = sharedPreferences.getInt(AppUtils.S_T_M,0)
+        set(value) = sharedPreferences.edit().putInt(AppUtils.S_T_M, value).apply()
+    var interval: Int
+        get() = sharedPreferences.getInt(AppUtils.INTERVAL,0)
+        set(value) = sharedPreferences.edit().putInt(AppUtils.INTERVAL, value).apply()
+    var weightS: String?
+        get() = sharedPreferences.getString(AppUtils.WEIGHT_KEY, "30.0")
+        set(value) = sharedPreferences.edit().putString(AppUtils.WEIGHT_KEY, value).apply()
+    var sleepingTimeS: String?
+        get() = sharedPreferences.getString(AppUtils.SLEEPING_TIME_KEY,"")
+        set(value) = sharedPreferences.edit().putString(AppUtils.SLEEPING_TIME_KEY, value).apply()
+    var wakeUpTimeS: String?
+        get() = sharedPreferences.getString(AppUtils.WAKEUP_TIME_KEY,"")
+        set(value) = sharedPreferences.edit().putString(AppUtils.WAKEUP_TIME_KEY, value).apply()
+
+    var isApplyConversion: Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.IS_APPLY_CONVERSION, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.IS_APPLY_CONVERSION, value).apply()
+
+
 }

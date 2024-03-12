@@ -18,17 +18,14 @@ class SplashScreenActivity : AppCompatActivity() {
     private var time: Long = ANIMATION_TIME
     private val timeoutHandler = Handler()
     private lateinit var binding : ActivitySplashScreenBinding
-    private lateinit var sharedPref: SharedPreferences
 
     companion object {
 
-        const val ANIMATION_TIME: Long = 3000
-        const val SHOW: Long = 25
+        const val ANIMATION_TIME: Long = 750
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPref = getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE)
 
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -39,13 +36,6 @@ class SplashScreenActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
-        if(!sharedPref.getBoolean(AppUtils.SEE_SPLASH_KEY,true)){
-            binding.splash.background = resources.getDrawable(R.mipmap.ic_launcher_background)
-            binding.imageView.visibility = View.VISIBLE
-            time = SHOW
-            binding.rpt.visibility = View.INVISIBLE
-        }
-
         val finalizer = Runnable {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
@@ -53,7 +43,7 @@ class SplashScreenActivity : AppCompatActivity() {
         timeoutHandler.postDelayed(finalizer, time)
 
 
-        binding.splash.setOnClickListener{
+        binding.drawerLayout.setOnClickListener{
             timeoutHandler.removeCallbacks(finalizer)
             startActivity(Intent(this, MainActivity::class.java))
             finish()

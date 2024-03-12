@@ -10,15 +10,20 @@ import rpt.tool.mementobibere.utils.extensions.toExtractFloat
 import rpt.tool.mementobibere.utils.extensions.toNumberString
 import rpt.tool.mementobibere.utils.extensions.toPrincipalUnit
 import java.text.DateFormat
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.GregorianCalendar
+import java.util.Locale
 import kotlin.math.ceil
 
 
 class AppUtils {
     companion object {
+
+        var decimalFormat = DecimalFormat("#0.00")
+        var decimalFormat2 = DecimalFormat("#0.0")
         fun calculateIntake(weight: Int, workType: Int, weightUnit: Int, gender: Int, climate: Int,
                             oldUnit: Int, unit: Int): Float {
 
@@ -154,8 +159,8 @@ class AppUtils {
 
         fun getMinWeight(weightUnit: Int): Int {
             when(weightUnit){
-                0-> return 20
-                1-> return 44
+                0-> return 30
+                1-> return 66
             }
             return 20
         }
@@ -303,7 +308,22 @@ class AppUtils {
             return 0
         }
 
+        fun getData(str: String): String {
+            return str.replace(",", ".")
+        }
+
+        fun convertData(time: Long): String {
+            var c: Calendar? = null
+            if (time != null) {
+                c = Calendar.getInstance()
+                c.timeInMillis = time
+            }
+            val simpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            return simpleDateFormat.format(c)
+        }
+
         val PRIVATE_MODE = 0
+        const val DEVELOPER_MODE = true
 
         const val UNIT_KEY: String = "current_unit"
         const val UNIT_NEW_KEY: String = "new_unit"
@@ -348,6 +368,40 @@ class AppUtils {
         const val INDEX_MONTH_KEY : String = "month"
         const val INDEX_YEAR_KEY : String = "year"
         const val DATE : String = "date"
+        const val USER_NAME: String = "username"
+        const val HEIGHT: String = "height"
+        const val IGNORE_NEXT_STEP: String = "ignore_next_step"
+        const val SET_MANUAL_GOAL: String = "set_manual_goal"
+        const val IS_PREGNANT: String = "is_pregnant"
+        const val IS_BREAST_FEEDING: String = "is_breast_feeding"
+        const val PERSON_WEIGHT: String = "person_weight"
+        const val PERSON_HEIGHT: String = "person_height"
+        const val MANUAL_INTAKE_KEY: String = "manual_intake"
+        const val W_U_H: String = "wake_up_hour"
+        const val W_U_M: String = "wake_up_min"
+        const val S_T_H: String = "sleeping_time_hour"
+        const val S_T_M: String = "sleeping_time_min"
+        const val INTERVAL: String = "interval"
+        const val SET_USER_NAME: String = "set_user_name"
+        const val SET_HEIGHT: String = "set_height"
+        const val IS_APPLY_CONVERSION: String = "is_apply_conversion"
+
+
+        public var MALE_WATER = 35.71
+        public var ACTIVE_MALE_WATER = 50.0
+        public var DEACTIVE_MALE_WATER = 14.29
+
+        public var FEMALE_WATER = 28.57
+        public var ACTIVE_FEMALE_WATER = 40.0
+        public var DEACTIVE_FEMALE_WATER = 11.43
+
+        public var PREGNANT_WATER = 700.0
+        public var BREASTFEEDING_WATER = 700.0
+
+        public var WEATHER_SUNNY = 1.0
+        public var WEATHER_CLOUDY = 0.85
+        public var WEATHER_RAINY = 0.68
+        public var WEATHER_SNOW = 0.88
 
         enum class TypeMessage {
             NOTHING, SAVE, MAN,WOMAN,WORKTYPE,CLIMATE

@@ -16,8 +16,8 @@ android {
         applicationId "rpt.tool.mementobibere"
         minSdk 26
         targetSdk 33
-        versionCode 21
-        versionName "1.0.4"
+        versionCode 22
+        versionName "1.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -110,6 +110,9 @@ dependencies {
     implementation("com.github.skydoves:balloon:1.6.3")
     //Button
     implementation 'info.hoang8f:fbutton:1.0.5'
+    //Time
+    implementation 'com.wdullaer:materialdatetimepicker:2.2.0'
+
     //Test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

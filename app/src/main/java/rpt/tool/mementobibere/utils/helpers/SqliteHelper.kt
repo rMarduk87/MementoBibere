@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.lifecycle.MutableLiveData
 import rpt.tool.mementobibere.data.models.MaxMinChartModel
+import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.data.appmodel.ReachedGoal
+import rpt.tool.mementobibere.utils.extensions.toCalculatedValue
 import rpt.tool.mementobibere.utils.extensions.toCalendar
 import rpt.tool.mementobibere.utils.extensions.toMonth
 import rpt.tool.mementobibere.utils.extensions.toReachedStatsString
@@ -21,7 +23,7 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
 ) {
 
     companion object {
-        private const val DATABASE_VERSION = 7
+        private const val DATABASE_VERSION = 8
         private const val DATABASE_NAME = "RptBibere"
         private const val TABLE_STATS = "stats"
         private const val TABLE_INTOOK_COUNTER = "intook_count"
@@ -113,7 +115,11 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
                 db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_N_INTOOK FLOAT")
                 db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_N_TOTAL_INTAKE FLOAT")
                 updateValuesOfIntake(db!!)
-            } else {
+            }
+            if (counter<8){
+                counter += 1
+                convertUnitOfIntake(db!!)
+            }else {
             }
         }
         else{
@@ -123,6 +129,37 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
             db!!.execSQL("DROP TABLE IF EXISTS $TABLE_AVIS")
             onCreate(db)
         }
+
+    private fun convertUnitOfIntake(db: SQLiteDatabase) {
+        val selectQueryStats = "SELECT * FROM $TABLE_STATS WHERE $KEY_UNIT = ? ORDER BY $KEY_DATE DESC"
+        db.rawQuery(selectQueryStats, arrayOf("0z US")).use {
+            if (!it.moveToFirst()) {
+                var id = it.getInt(0)
+                var intook = it.getFloat(7).toCalculatedValue(
+                    AppUtils.extractIntConversion(it.getString(4)),1)
+                var intake = it.getFloat(8).toCalculatedValue(
+                    AppUtils.extractIntConversion(it.getString(4)),1)
+                var script ="UPDATE $TABLE_STATS set $KEY_UNIT = \"0z UK\", $KEY_N_INTOOK = $intook, $KEY_N_TOTAL_INTAKE = $intake WHERE $KEY_ID = $id"
+                db!!.execSQL(script)
+                it.moveToNext()
+            }
+        }
+        updateReached(db)
+    }
+
+    private fun updateReached(db: SQLiteDatabase) {
+        val selectQuery = "SELECT * FROM $TABLE_REACHED WHERE $KEY_UNIT = ? ORDER BY $KEY_DATE DESC"
+        db.rawQuery(selectQuery, arrayOf("0z US")).use {
+            if (!it.moveToFirst()) {
+                var id = it.getInt(0)
+                var qta = it.getFloat(2).toCalculatedValue(
+                    AppUtils.extractIntConversion(it.getString(3)),1)
+                var script ="UPDATE $TABLE_REACHED set $KEY_UNIT = \"0z UK\", $KEY_QTA = $qta WHERE $KEY_ID = $id"
+                db!!.execSQL(script)
+                it.moveToNext()
+            }
+        }
+    }
 
 
     private fun updateValuesOfStats(db: SQLiteDatabase) {

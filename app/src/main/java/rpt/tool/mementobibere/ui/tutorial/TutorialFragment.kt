@@ -20,12 +20,10 @@ import com.skydoves.balloon.balloon
 import github.com.st235.lib_expandablebottombar.Menu
 import github.com.st235.lib_expandablebottombar.MenuItemDescriptor
 import rpt.tool.mementobibere.BaseFragment
-import rpt.tool.mementobibere.InitUserInfoActivity
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.WalkThroughtActivity
 import rpt.tool.mementobibere.databinding.TutorialFragmentBinding
+import rpt.tool.mementobibere.java.userinfo.InitUserInfoActivity
 import rpt.tool.mementobibere.utils.AppUtils
-import rpt.tool.mementobibere.utils.balloon.blood.BloodDonorInfoBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.tutorial.FifthHelpBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.tutorial.FirstHelpBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.tutorial.FourthHelpBalloonFactory
@@ -33,7 +31,6 @@ import rpt.tool.mementobibere.utils.balloon.tutorial.SecondHelpBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.tutorial.SeventhHelpBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.tutorial.SixthHelpBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.tutorial.ThirdHelpBalloonFactory
-import rpt.tool.mementobibere.utils.extensions.toCalculatedValue
 import rpt.tool.mementobibere.utils.extensions.toExtractFloat
 import rpt.tool.mementobibere.utils.extensions.toMainTheme
 import rpt.tool.mementobibere.utils.extensions.toNumberString
@@ -100,10 +97,7 @@ class TutorialFragment : BaseFragment<TutorialFragmentBinding>(TutorialFragmentB
 
         totalIntake = SharedPreferencesManager.totalIntake
 
-        if (SharedPreferencesManager.firstRun) {
-            startActivity(Intent(requireContext(), WalkThroughtActivity::class.java))
-            requireActivity().finish()
-        } else if (totalIntake <= 0) {
+        if (totalIntake <= 0) {
             startActivity(Intent(requireContext(), InitUserInfoActivity::class.java))
             requireActivity().finish()
         }

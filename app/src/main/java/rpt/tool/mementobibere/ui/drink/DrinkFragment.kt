@@ -33,11 +33,11 @@ import github.com.st235.lib_expandablebottombar.Menu
 import github.com.st235.lib_expandablebottombar.MenuItem
 import github.com.st235.lib_expandablebottombar.MenuItemDescriptor
 import rpt.tool.mementobibere.BaseFragment
-import rpt.tool.mementobibere.InitUserInfoActivity
 import rpt.tool.mementobibere.MainActivity
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.WalkThroughtActivity
 import rpt.tool.mementobibere.databinding.DrinkFragmentBinding
+import rpt.tool.mementobibere.java.userinfo.InitUserInfoActivity
 import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.balloon.blood.BloodDonorInfoBalloonFactory
 import rpt.tool.mementobibere.utils.extensions.toExtractFloat
@@ -116,8 +116,10 @@ class DrinkFragment : BaseFragment<DrinkFragmentBinding>(DrinkFragmentBinding::i
             startActivity(Intent(requireContext(), WalkThroughtActivity::class.java))
             requireActivity().finish()
         } else if (totalIntake <= 0) {
-            startActivity(Intent(requireContext(), InitUserInfoActivity::class.java))
-            requireActivity().finish()
+            if (totalIntake <= 0) {
+                startActivity(Intent(requireContext(), InitUserInfoActivity::class.java))
+                requireActivity().finish()
+            }
         }
 
         viewWindow = requireActivity().window.decorView.findViewById<View>(android.R.id.content)
@@ -128,6 +130,24 @@ class DrinkFragment : BaseFragment<DrinkFragmentBinding>(DrinkFragmentBinding::i
             initIntookValue()
             setValueForDrinking()
         }
+
+        if(!SharedPreferencesManager.isApplyConversion){
+            ApplyConversion()
+            SharedPreferencesManager.isApplyConversion = true
+        }
+    }
+
+    private fun ApplyConversion() {
+        SharedPreferencesManager.weightS = SharedPreferencesManager.weight.toString()
+        if(SharedPreferencesManager.workType>1){
+            SharedPreferencesManager.workType = 1
+        }
+        SharedPreferencesManager.wakeUpTimeS = AppUtils.convertData(SharedPreferencesManager.wakeUpTime)
+        SharedPreferencesManager.sleepingTimeS = AppUtils.convertData(SharedPreferencesManager.sleepingTime)
+        SharedPreferencesManager.wakeUpTimeHour = ((SharedPreferencesManager.wakeUpTime/ (1000 * 60 * 60) % 24).toInt())
+        SharedPreferencesManager.sleepingTimeHour = ((SharedPreferencesManager.sleepingTime/ (1000 * 60 * 60) % 24).toInt())
+        SharedPreferencesManager.wakeUpTimeMins = ((SharedPreferencesManager.wakeUpTime/ (1000 * 60) % 60).toInt())
+        SharedPreferencesManager.sleepingTimeMins = ((SharedPreferencesManager.sleepingTime/ (1000 * 60) % 60).toInt())
     }
 
     private fun initIntookValue() {

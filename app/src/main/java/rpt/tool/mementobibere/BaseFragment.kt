@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.Inflate
 import rpt.tool.mementobibere.utils.extensions.toAppTheme
+import rpt.tool.mementobibere.utils.helpers.StringHelper
 
 
 abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) : Fragment() {
@@ -26,6 +27,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
 
     private lateinit var sharedPref: SharedPreferences
     private var themeInt : Int = 0
+    var sh: StringHelper? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +37,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
         themeInt = sharedPref.getInt(AppUtils.THEME_KEY,0)
         setTheme()
         _binding = inflate.invoke(inflater, container, false)
+        sh = StringHelper(requireContext(), requireActivity())
         return binding.root
     }
 

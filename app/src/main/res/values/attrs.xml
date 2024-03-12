@@ -397,4 +397,29 @@
 
     <attr name="btn_date_sel" format="reference">
     </attr>
+
+    <declare-styleable name="HorizontalPicker">
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="values" format="reference" />
+        <attr name="android:ellipsize" />
+        <attr name="android:marqueeRepeatLimit" />
+        <attr name="dividerSize" format="dimension" />
+        <attr name="sideItems" format="integer" />
+    </declare-styleable>
+
+    <attr name="horizontalPickerStyle" format="reference" />
+
+    <declare-styleable name="MaterialProgressBar">
+    <attr name="matProg_progressIndeterminate" format="boolean" />
+    <attr name="matProg_barColor" format="color" />
+    <attr name="matProg_rimColor" format="color" />
+    <attr name="matProg_rimWidth" format="dimension" />
+    <attr name="matProg_spinSpeed" format="float" />
+    <attr name="matProg_barSpinCycleTime" format="integer" />
+    <attr name="matProg_circleRadius" format="dimension" />
+    <attr name="matProg_fillRadius" format="boolean" />
+    <attr name="matProg_barWidth" format="dimension" />
+    <attr name="matProg_linearProgress" format="boolean" />
+</declare-styleable>
 </resources>
