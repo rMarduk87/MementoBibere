@@ -314,4 +314,15 @@
     <string name="hour">Hour</string>
     <string name="goal_consume">You need to consume $1 to reach your goal of $2</string>
     <string name="active">Active</string>
+    <string name="today">Today</string>
+    <string name="next_reminder">NEXT REMINDER at $1</string>
+    <string name="history">History</string>
+    <string name="your_goal">Your goal</string>
+    <string name="consumed">Consumed</string>
+    <string name="hello">Hello</string>
+    <string name="rate_us">Rate</string>
+    <string name="contact">Contact</string>
+    <string name="calendar_avis">Blood Donor</string>
+    <string name="your_height">Your Height</string>
+    <string name="height_unit_hint">Please select your height measurement unit</string>
 </resources>

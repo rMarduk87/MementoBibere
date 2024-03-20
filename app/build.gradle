@@ -112,6 +112,9 @@ dependencies {
     implementation 'info.hoang8f:fbutton:1.0.5'
     //Time
     implementation 'com.wdullaer:materialdatetimepicker:2.2.0'
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     //Test
     testImplementation 'junit:junit:4.13.2'

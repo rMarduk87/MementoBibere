@@ -168,7 +168,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:src="@drawable/ic_calendar_mini"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/tvTotalIntake"
         app:layout_constraintTop_toTopOf="@+id/tvTotalIntake">
 
@@ -179,7 +179,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginLeft="-8dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/calendarAvis"
         app:layout_constraintTop_toTopOf="@+id/tvTotalIntake"
         app:srcCompat="@android:drawable/ic_menu_info_details"
@@ -193,7 +193,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="64dp"
         android:src="@drawable/ic_avis_day"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/tvTotalIntake"
         app:layout_constraintTop_toTopOf="@+id/tvTotalIntake">
 

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/app_transparant">
+
+    <Button
+        android:id="@+id/btnUpdate"
+        style="@android:style/Widget.Material.Button.Borderless"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="@dimen/dp_200"
+        android:drawableEnd="@drawable/ic_checked"
+        android:text="@string/update"
+        android:textColor="@color/rdo_gender_select"
+        tools:ignore="TextContrastCheck"
+        tools:text="@string/update" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_marginTop="@dimen/dp_60"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="true"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/dp_20"
+                android:text="@string/height"
+                android:textSize="@dimen/dp_20"
+                android:textColor="@color/rdo_gender_select"
+                android:fontFamily="@font/calibri_bold"/>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/txt_height"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="true"
+                    android:gravity="center"
+                    android:maxLength="4"
+                    android:inputType="numberDecimal"
+                    android:layout_centerHorizontal="true"
+                    android:background="@color/transparent"
+                    android:textSize="@dimen/dp_25"
+                    android:textColor="@color/rdo_gender_select"
+                    android:fontFamily="@font/calibri_light"/>
+
+                <RadioGroup
+                    android:id="@+id/radioGroup1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/dp_20">
+
+                    <RadioButton
+                        android:id="@+id/rdo_cm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:background="@drawable/rdo_back"
+                        android:text="@string/cm"
+                        android:textColor="@drawable/rdo_back"/>
+
+                    <RadioButton
+                        android:id="@+id/rdo_feet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@null"
+                        android:checked="true"
+                        android:background="@drawable/rdo_back_2"
+                        android:text="@string/feet"
+                        android:textColor="@drawable/rdo_back_2"/>
+
+                </RadioGroup>
+
+            </RelativeLayout>
+
+            <rpt.tool.mementobibere.utils.view.custom.picker.HorizontalPicker
+                android:id="@+id/pickerCM"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:textColor="@color/app_32"
+                android:textSize="20dp"
+                android:ellipsize="none"
+                android:marqueeRepeatLimit="-1"
+                />
+
+            <rpt.tool.mementobibere.utils.view.custom.picker.HorizontalPicker
+                android:id="@+id/pickerFeet"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:textColor="@color/app_32"
+                android:textSize="20dp"
+                android:ellipsize="none"
+                android:marqueeRepeatLimit="-1"
+                />
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

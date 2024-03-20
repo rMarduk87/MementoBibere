@@ -385,6 +385,8 @@ class AppUtils {
         const val SET_USER_NAME: String = "set_user_name"
         const val SET_HEIGHT: String = "set_height"
         const val IS_APPLY_CONVERSION: String = "is_apply_conversion"
+        const val SET_PREGNANT: String = "set_pregnant"
+        const val SET_BREASTFEEDING: String = "set_breastfeeding"
 
 
         public var MALE_WATER = 35.71

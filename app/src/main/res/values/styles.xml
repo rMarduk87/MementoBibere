@@ -240,5 +240,30 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+    <style name="toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:paddingStart">@dimen/dp_5</item>
+        <item name="android:paddingEnd">@dimen/dp_5</item>
+    </style>
+
+    <style name="toolbar_main_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:clickable">false</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:padding">@dimen/dp_3</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/rdo_gender_select</item>
+        <item name="android:textSize">@dimen/dp_14</item>
+        <item name="android:fontFamily">@font/calibri_light</item>
+    </style>
+
+
 
 </resources>

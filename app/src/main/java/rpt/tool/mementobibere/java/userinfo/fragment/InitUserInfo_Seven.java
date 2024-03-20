@@ -206,6 +206,7 @@ public class InitUserInfo_Seven extends MasterBaseFragment
 			pregnant_block.setBackground(mContext.getResources().getDrawable(R.drawable.rdo_gender_regular));
 			img_pregnant.setImageResource(R.drawable.pregnant);
 		}
+		SharedPreferencesManager.INSTANCE.setSetPregnantChoice(true);
 	}
 
 	public void setBreastfeeding()
@@ -222,5 +223,7 @@ public class InitUserInfo_Seven extends MasterBaseFragment
 			breastfeeding_block.setBackground(mContext.getResources().getDrawable(R.drawable.rdo_gender_regular));
 			img_breastfeeding.setImageResource(R.drawable.breastfeeding);
 		}
+
+		SharedPreferencesManager.INSTANCE.setSetBreastfeedingChoice(true);
 	}
 }

@@ -105,10 +105,10 @@ object SharedPreferencesManager {
         get() = sharedPreferences.getBoolean(AppUtils.START_TUTORIAL_KEY,false)
         set(value) = sharedPreferences.edit().putBoolean(AppUtils.START_TUTORIAL_KEY, value).apply()
     var gender: Int
-        get() = sharedPreferences.getInt(AppUtils.GENDER_KEY, 1)
+        get() = sharedPreferences.getInt(AppUtils.GENDER_KEY, -1)
         set(value) = sharedPreferences.edit().putInt(AppUtils.GENDER_KEY, value).apply()
     var workType: Int
-        get() = sharedPreferences.getInt(AppUtils.WORK_TIME_KEY, 1)
+        get() = sharedPreferences.getInt(AppUtils.WORK_TIME_KEY, -1)
         set(value) = sharedPreferences.edit().putInt(AppUtils.WORK_TIME_KEY, value).apply()
     var weight: Int
         get() = sharedPreferences.getInt(AppUtils.WEIGHT_KEY, 0)
@@ -117,7 +117,7 @@ object SharedPreferencesManager {
         get() = sharedPreferences.getInt(AppUtils.WEIGHT_UNIT_KEY,0)
         set(value) = sharedPreferences.edit().putInt(AppUtils.WEIGHT_UNIT_KEY, value).apply()
     var climate: Int
-        get() = sharedPreferences.getInt(AppUtils.CLIMATE_KEY, 0)
+        get() = sharedPreferences.getInt(AppUtils.CLIMATE_KEY, -1)
         set(value) = sharedPreferences.edit().putInt(AppUtils.CLIMATE_KEY, value).apply()
     var notificationMsg: String
         get() = sharedPreferences.getString(AppUtils.NOTIFICATION_MSG_KEY,ctx.getString(R.string.hey_lets_drink_some_water))!!
@@ -198,10 +198,16 @@ object SharedPreferencesManager {
     var wakeUpTimeS: String?
         get() = sharedPreferences.getString(AppUtils.WAKEUP_TIME_KEY,"")
         set(value) = sharedPreferences.edit().putString(AppUtils.WAKEUP_TIME_KEY, value).apply()
-
     var isApplyConversion: Boolean
         get() = sharedPreferences.getBoolean(AppUtils.IS_APPLY_CONVERSION, false)
         set(value) = sharedPreferences.edit().putBoolean(AppUtils.IS_APPLY_CONVERSION, value).apply()
 
+    var setPregnantChoice : Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.SET_PREGNANT, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SET_PREGNANT, value).apply()
+
+    var setBreastfeedingChoice : Boolean
+        get() = sharedPreferences.getBoolean(AppUtils.SET_BREASTFEEDING, false)
+        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SET_BREASTFEEDING, value).apply()
 
 }

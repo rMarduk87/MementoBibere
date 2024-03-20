@@ -1,139 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/initUserInfoParentLayout"
-    android:background="@color/white"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    android:orientation="vertical"
+    android:background="@color/app_transparant">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/init_user_info_climate"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.081" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:orientation="vertical">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/btnCold"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginEnd="80dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/cold" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="true"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/dp_20"
+                android:text="@string/weather_conditions"
+                android:textSize="@dimen/dp_20"
+                android:textColor="@color/rdo_gender_select"
+                android:fontFamily="@font/calibri_bold"/>
 
-    <TextView
-        android:id="@+id/coldTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cold"
-        android:textStyle="bold"
-        android:layout_marginTop="144dp"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@+id/btnCold"
-        app:layout_constraintRight_toRightOf="@+id/btnCold"
-        app:layout_constraintTop_toTopOf="@+id/btnCold"
-        app:layout_constraintBottom_toBottomOf="@+id/btnCold" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dp_15">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/btnFresh"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="80dp"
-        app:layout_constraintEnd_toEndOf="@+id/textView4"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/fresh" />
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/freshTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/fresh"
-        android:textStyle="bold"
-        android:layout_marginTop="144dp"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@+id/btnFresh"
-        app:layout_constraintRight_toRightOf="@+id/btnFresh"
-        app:layout_constraintTop_toTopOf="@+id/btnFresh"
-        app:layout_constraintBottom_toBottomOf="@+id/btnFresh" />
+                    <RelativeLayout
+                        android:id="@+id/sunny_block"
+                        android:layout_width="@dimen/dp_80"
+                        android:layout_height="@dimen/dp_80"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/rdo_gender_regular">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/btnMild"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginEnd="80dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/btnCold"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/mild" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/mildTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mild"
-        android:textStyle="bold"
-        android:layout_marginTop="144dp"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@+id/btnMild"
-        app:layout_constraintRight_toRightOf="@+id/btnMild"
-        app:layout_constraintTop_toTopOf="@+id/btnMild"
-        app:layout_constraintBottom_toBottomOf="@+id/btnMild" />
+                            <ImageView
+                                android:id="@+id/img_sunny"
+                                android:layout_width="@dimen/dp_50"
+                                android:layout_height="@dimen/dp_50"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/sunny"/>
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/btnTorrid"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="@+id/textView4"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnFresh"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/torrid" />
+                        </LinearLayout>
 
-    <TextView
-        android:id="@+id/torridTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/torrid"
-        android:textStyle="bold"
-        android:layout_marginTop="144dp"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@+id/btnTorrid"
-        app:layout_constraintRight_toRightOf="@+id/btnTorrid"
-        app:layout_constraintTop_toTopOf="@+id/btnTorrid"
-        app:layout_constraintBottom_toBottomOf="@+id/btnTorrid" />
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_below="@+id/sunny_block"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/sunny"
+                        android:textSize="@dimen/dp_12"
+                        android:textColor="@color/rdo_gender_select"
+                        android:fontFamily="@font/calibri_light"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <RelativeLayout
+                        android:id="@+id/cloudy_block"
+                        android:layout_width="@dimen/dp_80"
+                        android:layout_height="@dimen/dp_80"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/rdo_gender_regular">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/img_cloudy"
+                                android:layout_width="@dimen/dp_50"
+                                android:layout_height="@dimen/dp_50"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/cloudy"/>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/cloudy_block"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/cloudy"
+                        android:textSize="@dimen/dp_12"
+                        android:textColor="@color/rdo_gender_select"
+                        android:fontFamily="@font/calibri_light"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dp_15">
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <RelativeLayout
+                        android:id="@+id/rainy_block"
+                        android:layout_width="@dimen/dp_80"
+                        android:layout_height="@dimen/dp_80"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/rdo_gender_regular">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/img_rainy"
+                                android:layout_width="@dimen/dp_50"
+                                android:layout_height="@dimen/dp_50"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/rainy"/>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:layout_below="@+id/rainy_block"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/rainy"
+                        android:textSize="@dimen/dp_12"
+                        android:textColor="@color/rdo_gender_select"
+                        android:fontFamily="@font/calibri_light"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <RelativeLayout
+                        android:id="@+id/snow_block"
+                        android:layout_width="@dimen/dp_80"
+                        android:layout_height="@dimen/dp_80"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/rdo_gender_regular">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/img_snow"
+                                android:layout_width="@dimen/dp_50"
+                                android:layout_height="@dimen/dp_50"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/snow"/>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/snow_block"
+                        android:layout_marginTop="@dimen/dp_5"
+                        android:text="@string/snow"
+                        android:textSize="@dimen/dp_12"
+                        android:textColor="@color/rdo_gender_select"
+                        android:fontFamily="@font/calibri_light"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

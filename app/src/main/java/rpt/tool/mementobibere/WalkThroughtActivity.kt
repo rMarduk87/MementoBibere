@@ -9,10 +9,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.skydoves.balloon.BalloonAlign
 import com.skydoves.balloon.balloon
 import rpt.tool.mementobibere.databinding.ActivityWalkThroughBinding
+import rpt.tool.mementobibere.java.userinfo.InitUserInfoActivity
 import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.balloon.walktrought.FifthWalkthroughtBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.walktrought.FirstWalkthroughtBalloonFactory
@@ -48,7 +50,7 @@ class WalkThroughtActivity : AppCompatActivity() {
         startWalkThrough(binding.root)
     }
 
-    private fun startWalkThrough(root: ConstraintLayout) {
+    private fun startWalkThrough(root: RelativeLayout) {
         fifthWalkthroughBalloon.dismiss()
         binding.imageView2.visibility = View.VISIBLE
         binding.imageView3.visibility = View.GONE
@@ -70,7 +72,7 @@ class WalkThroughtActivity : AppCompatActivity() {
         }, 6500)
     }
 
-    private fun goToSecond(root: ConstraintLayout) {
+    private fun goToSecond(root: RelativeLayout) {
         binding.imageView2.visibility = View.GONE
         binding.imageView3.visibility = View.VISIBLE
         binding.imageView4.visibility = View.GONE
@@ -91,7 +93,7 @@ class WalkThroughtActivity : AppCompatActivity() {
         }, 5000)
     }
 
-    private fun goToThird(root: ConstraintLayout) {
+    private fun goToThird(root: RelativeLayout) {
         binding.imageView2.visibility = View.GONE
         binding.imageView3.visibility = View.GONE
         binding.imageView4.visibility = View.VISIBLE
@@ -112,7 +114,7 @@ class WalkThroughtActivity : AppCompatActivity() {
         }, 6500)
     }
 
-    private fun goToFourth(root: ConstraintLayout) {
+    private fun goToFourth(root: RelativeLayout) {
         binding.imageView2.visibility = View.GONE
         binding.imageView3.visibility = View.GONE
         binding.imageView4.visibility = View.GONE
@@ -133,7 +135,7 @@ class WalkThroughtActivity : AppCompatActivity() {
         }, 5000)
     }
 
-    private fun goToFifth(root: ConstraintLayout) {
+    private fun goToFifth(root: RelativeLayout) {
         binding.imageView2.visibility = View.GONE
         binding.imageView3.visibility = View.GONE
         binding.imageView4.visibility = View.GONE
