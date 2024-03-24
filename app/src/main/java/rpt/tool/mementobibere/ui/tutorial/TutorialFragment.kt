@@ -21,6 +21,7 @@ import github.com.st235.lib_expandablebottombar.Menu
 import github.com.st235.lib_expandablebottombar.MenuItemDescriptor
 import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
+import rpt.tool.mementobibere.WalkthroughActivity
 import rpt.tool.mementobibere.databinding.TutorialFragmentBinding
 import rpt.tool.mementobibere.java.userinfo.InitUserInfoActivity
 import rpt.tool.mementobibere.utils.AppUtils
@@ -467,9 +468,7 @@ class TutorialFragment : BaseFragment<TutorialFragmentBinding>(TutorialFragmentB
 
         Handler(Looper.getMainLooper()).postDelayed({
             seventhHelpBalloon.dismiss()
-            val editor = sharedPref.edit()
-            editor.putBoolean(AppUtils.START_TUTORIAL_KEY, false)
-            editor.apply()
+            SharedPreferencesManager.startTutorial = false
             safeNavController?.safeNavigate(TutorialFragmentDirections
                 .actionTutorialFragmentToDrinkFragment())
         }, 2650)

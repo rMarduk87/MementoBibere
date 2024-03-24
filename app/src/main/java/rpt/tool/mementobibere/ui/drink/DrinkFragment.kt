@@ -35,7 +35,7 @@ import github.com.st235.lib_expandablebottombar.MenuItemDescriptor
 import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.MainActivity
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.WalkThroughtActivity
+import rpt.tool.mementobibere.WalkthroughActivity
 import rpt.tool.mementobibere.databinding.DrinkFragmentBinding
 import rpt.tool.mementobibere.java.userinfo.InitUserInfoActivity
 import rpt.tool.mementobibere.utils.AppUtils
@@ -113,7 +113,7 @@ class DrinkFragment : BaseFragment<DrinkFragmentBinding>(DrinkFragmentBinding::i
         totalIntake = SharedPreferencesManager.totalIntake
 
         if (SharedPreferencesManager.firstRun) {
-            startActivity(Intent(requireContext(), WalkThroughtActivity::class.java))
+            startActivity(Intent(requireContext(), WalkthroughActivity::class.java))
             requireActivity().finish()
         } else if (totalIntake <= 0) {
             if (totalIntake <= 0) {

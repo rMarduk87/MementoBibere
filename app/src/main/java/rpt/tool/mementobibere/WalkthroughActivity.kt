@@ -3,7 +3,6 @@
 package rpt.tool.mementobibere
 
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -13,20 +12,17 @@ import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.skydoves.balloon.BalloonAlign
 import com.skydoves.balloon.balloon
-import rpt.tool.mementobibere.databinding.ActivityWalkThroughBinding
-import rpt.tool.mementobibere.java.userinfo.InitUserInfoActivity
-import rpt.tool.mementobibere.utils.AppUtils
+import rpt.tool.mementobibere.databinding.ActivityWalkthroughBinding
 import rpt.tool.mementobibere.utils.balloon.walktrought.FifthWalkthroughtBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.walktrought.FirstWalkthroughtBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.walktrought.FourthWalkthroughtBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.walktrought.SecondWalkthroughtBalloonFactory
 import rpt.tool.mementobibere.utils.balloon.walktrought.ThirdWalkthroughtBalloonFactory
 
-class WalkThroughtActivity : AppCompatActivity() {
+class WalkthroughActivity : AppCompatActivity() {
 
 
-    private lateinit var binding: ActivityWalkThroughBinding
-    private lateinit var sharedPref: SharedPreferences
+    private lateinit var binding: ActivityWalkthroughBinding
     private val firstWalkthroughBalloon by balloon<FirstWalkthroughtBalloonFactory>()
     private val secondWalkthroughBalloon by balloon<SecondWalkthroughtBalloonFactory>()
     private val thirdWalkthroughBalloon by balloon<ThirdWalkthroughtBalloonFactory>()
@@ -36,9 +32,8 @@ class WalkThroughtActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityWalkThroughBinding.inflate(layoutInflater)
+        binding = ActivityWalkthroughBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        sharedPref = getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         binding.mainLayout.isClickable = false
