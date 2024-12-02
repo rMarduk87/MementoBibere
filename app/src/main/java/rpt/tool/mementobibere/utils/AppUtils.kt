@@ -1,14 +1,8 @@
 package rpt.tool.mementobibere.utils
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.ParseException
-import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.data.models.MonthChartModel
-import rpt.tool.mementobibere.utils.extensions.toCalculatedValue
-import rpt.tool.mementobibere.utils.extensions.toExtractFloat
-import rpt.tool.mementobibere.utils.extensions.toNumberString
-import rpt.tool.mementobibere.utils.extensions.toPrincipalUnit
+import rpt.tool.mementobibere.migration.data.models.MonthChartModel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -19,26 +13,7 @@ import kotlin.math.ceil
 
 class AppUtils {
     companion object {
-        fun calculateIntake(weight: Int, workType: Int, weightUnit: Int, gender: Int, climate: Int,
-                            oldUnit: Int, unit: Int): Float {
 
-            var convertedWeight = weight.toPrincipalUnit(weightUnit)
-            var intake = (convertedWeight * 100 / 3.0)
-            if(gender == 1){
-                intake -= 450
-            }
-            when(workType){
-                1-> intake += 257
-                2-> intake += 515
-                3-> intake += 1030
-            }
-            when(climate){
-                0-> intake += 129
-                2-> intake += 257
-                3-> intake += 515
-            }
-            return intake.toFloat().toCalculatedValue(oldUnit,unit)
-        }
 
         @SuppressLint("SimpleDateFormat")
         fun getCurrentOnlyDate(): String? {
@@ -89,20 +64,14 @@ class AppUtils {
             return "ml"
         }
 
-        fun calculateExtensionsForWeight(unit: Int, context: Context): String {
-            when(unit)
-            {
-                0-> return context.getString(R.string.kg)
-                1-> return context.getString(R.string.lbl)
-            }
-            return context.getString(R.string.kg)
-        }
 
         fun firstConversion(value: Float, unit: Int): Float {
             var converted = value
             when(unit){
-                1-> converted = mlToOzUK(value)
-                2-> converted = mlToOzUS(value)
+                1-> converted =
+                    mlToOzUK(value)
+                2-> converted =
+                    mlToOzUS(value)
             }
             return converted
         }
@@ -128,8 +97,14 @@ class AppUtils {
             val calendarSleep = Calendar.getInstance()
             calendarSleep.set(2023,9,27,calendarStringS[0].toInt(),calendarStringS[1].toInt())
 
-            return !isSameDateTime(calendarWake,calendarSleep) &&
-                    !isCalendar2MajorOfCalendar(calendarWake,calendarSleep)
+            return !isSameDateTime(
+                calendarWake,
+                calendarSleep
+            ) &&
+                    !isCalendar2MajorOfCalendar(
+                        calendarWake,
+                        calendarSleep
+                    )
         }
 
         private fun isSameDateTime(cal1: Calendar, cal2: Calendar): Boolean {
@@ -180,9 +155,19 @@ class AppUtils {
 
         fun convertToSelected(selectedOption: Float, unit: String): Float {
             when(extractIntConversion(unit)){
-                0-> return extractSelection(selectedOption)
-                1-> return extractSelection(ozUKToMl(selectedOption))
-                2-> return extractSelection(ozUSToMl(selectedOption))
+                0-> return extractSelection(
+                    selectedOption
+                )
+                1-> return extractSelection(
+                    ozUKToMl(
+                        selectedOption
+                    )
+                )
+                2-> return extractSelection(
+                    ozUSToMl(
+                        selectedOption
+                    )
+                )
             }
             return selectedOption
         }
@@ -345,137 +330,7 @@ class AppUtils {
         const val INDEX_YEAR_KEY : String = "year"
         const val DATE : String = "date"
 
-        enum class TypeMessage {
-            NOTHING, SAVE, MAN,WOMAN,WORKTYPE,CLIMATE
-        }
 
-        val listIds = arrayOf(
-            R.id.icon_bell,
-            R.id.icon_info,
-            R.id.icon_trophy,
-            R.id.icon_stats
-        )
-
-        val listIconNotify = arrayOf(
-            R.drawable.ic_bell,
-            R.drawable.ic_info,
-            R.drawable.ic_trophy,
-            R.drawable.ic_stats
-        )
-
-        val listStringNotify = arrayOf(
-            R.string.notific,
-            R.string.info,
-            R.string.trophy,
-            R.string.stats
-        )
-
-        val listIconNotNotify = arrayOf(
-            R.drawable.ic_bell_disabled,
-            R.drawable.ic_info,
-            R.drawable.ic_trophy,
-            R.drawable.ic_stats
-        )
-
-        val listStringNotNotify = arrayOf(
-            R.string.notificNo,
-            R.string.edit,
-            R.string.info,
-            R.string.stats
-        )
-
-        val listIdsInfoTheme = arrayOf(
-            R.id.icon_light,
-            R.id.icon_dark
-        )
-
-        val listInfoTheme = arrayOf(
-            R.drawable.ic_light,
-            R.drawable.ic_dark
-
-        )
-
-        val listStringInfoTheme= arrayOf(
-            R.string.light,
-            R.string.dark
-        )
-
-        val listIdsInfoSystem = arrayOf(
-            R.id.icon_ml,
-            R.id.icon_oz_uk,
-            R.id.icon_oz_us
-
-        )
-
-        val listInfoSystem = arrayOf(
-            R.drawable.ic_ml,
-            R.drawable.ic_oz_uk,
-            R.drawable.ic_oz_us
-
-        )
-
-        val listStringInfoSystem= arrayOf(
-            R.string.ml,
-            R.string.oz_uk,
-            R.string.oz_us
-        )
-
-        val listIdsFreq = arrayOf(
-            R.id.icon_30,
-            R.id.icon_45,
-            R.id.icon_60
-
-        )
-
-        val listFreq = arrayOf(
-            R.drawable.ic_30,
-            R.drawable.ic_45,
-            R.drawable.ic_60
-
-        )
-
-        val listStringFreq= arrayOf(
-            R.string._30_mins,
-            R.string._45_mins,
-            R.string._60_mins
-        )
-
-        val listIdsWeightSystem = arrayOf(
-            R.id.icon_kg,
-            R.id.icon_lbl
-        )
-
-        val listWeightSystem = arrayOf(
-            R.drawable.ic_kg,
-            R.drawable.ic_lbl
-        )
-
-        val listStringWeightSystem= arrayOf(
-            R.string.kg,
-            R.string.lbl
-        )
-
-        val listIdsStats = arrayOf(
-            R.id.icon_all,
-            R.id.icon_daily,
-            R.id.icon_intook,
-            R.id.icon_reach
-        )
-
-        val listIdsTips = arrayOf(
-            R.id.tips_on,
-            R.id.tips_off
-        )
-
-        val listIconTips = arrayOf(
-            R.drawable.ic_on,
-            R.drawable.ic_off
-        )
-
-        val listStringTips = arrayOf(
-            R.string.on,
-            R.string.off
-        )
     }
 }
 

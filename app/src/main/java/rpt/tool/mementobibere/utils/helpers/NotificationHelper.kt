@@ -7,148 +7,353 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import rpt.tool.mementobibere.MainActivity
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.utils.AppUtils
-import rpt.tool.mementobibere.utils.extensions.toCalculatedValue
-import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
-import java.util.*
+import rpt.tool.mementobibere.ScreenSelectBottleActivity
+import rpt.tool.mementobibere.SelectSnoozeActivity
+import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
+import rpt.tool.mementobibere.basic.appbasiclibs.utils.Date_Helper
+import rpt.tool.mementobibere.basic.appbasiclibs.utils.Preferences_Helper
+import rpt.tool.mementobibere.utils.URLFactory
+import rpt.tool.mementobibere.utils.extensions.equalsIgnoreCase
+import rpt.tool.mementobibere.utils.log.d
 
-class NotificationHelper(val ctx: Context) {
-    private var notificationManager: NotificationManager? = null
+internal class NotificationHelper(private val mContext: Context) {
+    var dth: Date_Helper = Date_Helper()
+    var ph: Preferences_Helper = Preferences_Helper(mContext)
 
-    private val CHANNEL_ONE_ID = "Default"
-    private val CHANNEL_ONE_NAME = "Default"
-
-
-    private fun createChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationsNewMessageRingtone = SharedPreferencesManager.notificationTone
-            val notificationChannel = NotificationChannel(
-                CHANNEL_ONE_ID,
-                CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.BLUE
-            notificationChannel.setShowBadge(true)
-            notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-
-            if (notificationsNewMessageRingtone!!.isNotEmpty()) {
-                val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build()
-                notificationChannel.setSound(Uri.parse(notificationsNewMessageRingtone), audioAttributes)
-            }
-
-            getManager()!!.createNotificationChannel(notificationChannel)
-        }
+    init {
+        if (URLFactory.notification_ringtone == null) URLFactory.notification_ringtone =
+            RingtoneManager.getRingtone(mContext, sound)
     }
 
-    @SuppressLint("RemoteViewLayout")
-    fun getNotification(
-        title: String,
-        body: String,
-        notificationsTone: String?
-    ): NotificationCompat.Builder? {
-        createChannels()
-        val view = RemoteViews(ctx.packageName,R.layout.memento_bibere_notification_layout)
-        view.setTextViewText(R.id.title,title)
-        view.setTextViewText(R.id.text, body)
-        val notification = NotificationCompat.Builder(ctx.applicationContext, CHANNEL_ONE_ID)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setLargeIcon(
-                BitmapFactory.decodeResource(
-                    ctx.resources,
-                    R.mipmap.ic_launcher
-                )
-            )
-            .setSmallIcon(R.drawable.ic_small_icon)
-            .setAutoCancel(true)
+    fun createNotification() {
+        d("createNotification", "" + ph.getInt(URLFactory.REMINDER_OPTION))
+        d("createNotification V", "" + ph.getBoolean(URLFactory.REMINDER_VIBRATE))
 
-        notification.setShowWhen(true)
 
-        notification.setSound(Uri.parse(notificationsTone))
 
-        val notificationIntent = Intent(ctx, MainActivity::class.java)
+        if (ph.getInt(URLFactory.REMINDER_OPTION) === 1) return
 
-        notificationIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        val contentIntent =
-            PendingIntent.getActivity(ctx, 99, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        if (reachedDailyGoal() && ph.getBoolean(URLFactory.DISABLE_NOTIFICATION)) return
 
-        notification.setContentIntent(contentIntent)
 
-        return notification
-    }
+        val intent: Intent = Intent(mContext, MainActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
-    private fun shallNotify(): Boolean {
-        val sqliteHelper = SqliteHelper(ctx)
+        val resultPendingIntent: PendingIntent =
+            PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val startTimestamp = SharedPreferencesManager.wakeUpTime
-        val stopTimestamp = SharedPreferencesManager.sleepingTime
-        var totalIntake = 0f
+        val snoozeIntent: Intent = Intent(mContext, SelectSnoozeActivity::class.java)
+        snoozeIntent.setAction("SNOOZE_ACTION")
+        snoozeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val snoozePendingIntent: PendingIntent =
+            PendingIntent.getActivity(mContext, 0, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        totalIntake = SharedPreferencesManager.totalIntake
-
-        if (startTimestamp == 0L || stopTimestamp == 0L || totalIntake == 0f)
-            return false
-
-        val percent = sqliteHelper.getIntook(AppUtils.getCurrentDate()!!) * 100 / totalIntake
-
-        val now = Calendar.getInstance().time
-
-        val start = Date(startTimestamp)
-        val stop = Date(stopTimestamp)
-
-        val passedSeconds = compareTimes(now, start)
-        val totalSeconds = compareTimes(stop, start)
-
-        // percentage which should have been consumed by now:
-        val currentTarget = passedSeconds.toFloat() / totalSeconds.toFloat() * 100f
-
-        val doNotDisturbOff = passedSeconds >= 0 && compareTimes(now, stop) <= 0
-
-        val notify = doNotDisturbOff && (percent < currentTarget)
-        Log.i("MementoBibere",
-            "notify: $notify, dndOff: $doNotDisturbOff, " +
-                    "currentTarget: $currentTarget, percent: $percent"
+        val addWaterIntent: Intent = Intent(mContext, ScreenSelectBottleActivity::class.java)
+        addWaterIntent.setAction("ADD_WATER_ACTION")
+        addWaterIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        val addWaterPendingIntent: PendingIntent = PendingIntent.getActivity(
+            mContext,
+            0,
+            addWaterIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
-        return notify
-    }
 
-    private fun compareTimes(currentTime: Date, timeToRun: Date): Long {
-        val currentCal = Calendar.getInstance()
-        currentCal.time = currentTime
 
-        val runCal = Calendar.getInstance()
-        runCal.time = timeToRun
-        runCal.set(Calendar.DAY_OF_MONTH, currentCal.get(Calendar.DAY_OF_MONTH))
-        runCal.set(Calendar.MONTH, currentCal.get(Calendar.MONTH))
-        runCal.set(Calendar.YEAR, currentCal.get(Calendar.YEAR))
+        val mBuilder = NotificationCompat.Builder(mContext)
+        mBuilder.setSmallIcon(R.drawable.ic_small_app_icon)
+        mBuilder.setLargeIcon(
+            BitmapFactory.decodeResource(
+                mContext.resources,
+                R.mipmap.ic_launcher
+            )
+        )
+        mBuilder.setContentTitle(mContext.resources.getString(R.string.str_drink_water))
+            .setContentText("" + get_today_report())
+            .setAutoCancel(true)
+            .setContentIntent(resultPendingIntent)
+            .setColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
 
-        return currentCal.timeInMillis - runCal.timeInMillis
-    }
-
-    fun notify(id: Long, notification: NotificationCompat.Builder?) {
-        if (shallNotify()) {
-            getManager()!!.notify(id.toInt(), notification!!.build())
+        if (ph.getInt(URLFactory.REMINDER_OPTION) === 0 && !ph.getBoolean(URLFactory.REMINDER_VIBRATE)) {
+            mBuilder.setDefaults(Notification.DEFAULT_ALL)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                mBuilder.setSound(sound)
+            }
+        } else if (ph.getInt(URLFactory.REMINDER_OPTION) === 0 && ph.getBoolean(URLFactory.REMINDER_VIBRATE)) {
+            mBuilder.setDefaults(Notification.DEFAULT_SOUND)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                mBuilder.setSound(sound)
+            }
+        } else if (ph.getInt(URLFactory.REMINDER_OPTION) === 2 && !ph.getBoolean(URLFactory.REMINDER_VIBRATE)) {
+            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                mBuilder.setSound(null)
+            }
+        } else {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                mBuilder.setSound(null)
+            }
         }
+
+        mBuilder.addAction(
+            R.drawable.ic_plus,
+            mContext.resources.getString(R.string.str_add_water),
+            addWaterPendingIntent
+        )
+        mBuilder.addAction(
+            R.drawable.ic_notification,
+            mContext.resources.getString(R.string.str_snooze),
+            snoozePendingIntent
+        )
+
+
+        //mBuilder.addAction(replyAction);
+        val mNotificationManager: NotificationManager =
+            mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID)
+            mNotificationManager.deleteNotificationChannel(NOTIFICATION_VIBRATE_CHANNEL_ID)
+
+            if (ph.getInt(URLFactory.REMINDER_OPTION) === 0) {
+                if (!ph.getBoolean(URLFactory.REMINDER_VIBRATE)) {
+                    val importance: Int = NotificationManager.IMPORTANCE_HIGH
+                    val notificationChannel: NotificationChannel = NotificationChannel(
+                        NOTIFICATION_CHANNEL_ID, "Reminder", importance
+                    )
+                    notificationChannel.enableLights(true)
+                    notificationChannel.lightColor = Color.RED
+                    notificationChannel.setSound(null, null)
+                    notificationChannel.enableVibration(true)
+                    notificationChannel.vibrationPattern = longArrayOf(
+                        100,
+                        200,
+                        300,
+                        400,
+                        500,
+                        400,
+                        300,
+                        200,
+                        400
+                    )
+
+
+                    checkNotNull(mNotificationManager)
+                    mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
+
+
+                    mNotificationManager.createNotificationChannel(notificationChannel)
+                } else {
+                    val importance: Int = NotificationManager.IMPORTANCE_HIGH
+                    val notificationChannel: NotificationChannel = NotificationChannel(
+                        NOTIFICATION_VIBRATE_CHANNEL_ID, "Vibrate Reminder", importance
+                    )
+                    notificationChannel.enableLights(true)
+                    notificationChannel.setSound(null, null)
+                    notificationChannel.lightColor = Color.RED
+                    notificationChannel.enableVibration(false)
+                    notificationChannel.vibrationPattern = longArrayOf(0)
+
+
+                    checkNotNull(mNotificationManager)
+                    mBuilder.setChannelId(NOTIFICATION_VIBRATE_CHANNEL_ID)
+
+                    mNotificationManager.createNotificationChannel(notificationChannel)
+                }
+
+                try {
+                    if (!URLFactory.notification_ringtone!!.isPlaying){
+                        URLFactory.notification_ringtone!!.play()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else {
+                if (!ph.getBoolean(URLFactory.REMINDER_VIBRATE)) {
+                    val channel_none: NotificationChannel = NotificationChannel(
+                        NOTIFICATION_SILENT_CHANNEL_ID,
+                        "Silent Reminder",
+                        NotificationManager.IMPORTANCE_HIGH
+                    )
+                    channel_none.setSound(null, null)
+                    channel_none.enableVibration(true)
+                    channel_none.vibrationPattern = longArrayOf(
+                        100,
+                        200,
+                        300,
+                        400,
+                        500,
+                        400,
+                        300,
+                        200,
+                        400
+                    )
+
+                    checkNotNull(mNotificationManager)
+                    mBuilder.setChannelId(NOTIFICATION_SILENT_CHANNEL_ID)
+                    mNotificationManager.createNotificationChannel(channel_none)
+                } else {
+                    val channel_none: NotificationChannel = NotificationChannel(
+                        NOTIFICATION_SILENT_VIBRATE_CHANNEL_ID,
+                        "Silent-Vibrate Reminder",
+                        NotificationManager.IMPORTANCE_HIGH
+                    )
+                    channel_none.setSound(null, null)
+                    channel_none.enableVibration(false)
+                    channel_none.vibrationPattern = longArrayOf(0)
+                    checkNotNull(mNotificationManager)
+                    mBuilder.setChannelId(NOTIFICATION_SILENT_VIBRATE_CHANNEL_ID)
+                    mNotificationManager.createNotificationChannel(channel_none)
+                }
+            }
+        }
+        checkNotNull(mNotificationManager)
+        mNotificationManager.notify(0,  /* Request Code */mBuilder.build())
     }
 
-    private fun getManager(): NotificationManager? {
-        if (notificationManager == null) {
-            notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val sound: Uri
+        get() {
+            var uri = Settings.System.DEFAULT_NOTIFICATION_URI
+
+            Log.d("getSound", "" + ph.getInt(URLFactory.REMINDER_SOUND))
+
+            if (ph.getInt(URLFactory.REMINDER_SOUND) === 1) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.bell)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 2) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.blop)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 3) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.bong)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 4) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.click)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 5) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.echo_droplet)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 6) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.mario_droplet)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 7) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.ship_bell)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 8) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.simple_droplet)
+            else if (ph.getInt(URLFactory.REMINDER_SOUND) === 9) uri =
+                Uri.parse("android.resource://" + mContext.packageName + "/" + R.raw.tiny_droplet)
+
+            return uri
         }
-        return notificationManager
+
+    fun reachedDailyGoal(): Boolean {
+        Constant.SDB = mContext.openOrCreateDatabase(
+            Constant.DATABASE_NAME,
+            Context.MODE_PRIVATE,
+            null
+        )
+
+        if (ph.getFloat(URLFactory.DAILY_WATER) === 0f) {
+            URLFactory.DAILY_WATER_VALUE = 2500f
+        } else {
+            URLFactory.DAILY_WATER_VALUE = ph.getFloat(URLFactory.DAILY_WATER)
+        }
+
+        val arr_data = getdata(
+            "tbl_drink_details",
+            ("DrinkDate ='" + dth.getCurrentDate("dd-MM-yyyy")).toString() + "'"
+        )
+
+        var drink_water = 0f
+        for (k in arr_data.indices) {
+            drink_water += if (URLFactory.WATER_UNIT_VALUE.equalsIgnoreCase("ml")){
+                arr_data[k]["ContainerValue"]!!.toDouble().toFloat()
+            } else{
+                arr_data[k]["ContainerValueOZ"]!!.toDouble().toFloat()
+            }
+        }
+
+        return if (drink_water >= URLFactory.DAILY_WATER_VALUE) true
+        else false
+    }
+
+    @SuppressLint("WrongConstant")
+    fun get_today_report(): String {
+        Constant.SDB = mContext.openOrCreateDatabase(
+            Constant.DATABASE_NAME,
+            SQLiteDatabase.CREATE_IF_NECESSARY,
+            null
+        )
+
+        if (ph.getFloat(URLFactory.DAILY_WATER) === 0f) {
+            URLFactory.DAILY_WATER_VALUE = 2500f
+        } else {
+            URLFactory.DAILY_WATER_VALUE = ph.getFloat(URLFactory.DAILY_WATER)
+        }
+
+        if (check_blank_data("" + ph.getString(URLFactory.WATER_UNIT))) {
+            URLFactory.WATER_UNIT_VALUE = "ML"
+        } else {
+            URLFactory.WATER_UNIT_VALUE = ph.getString(URLFactory.WATER_UNIT)!!
+        }
+
+        val arr_data = getdata(
+            "tbl_drink_details",
+            ("DrinkDate ='" + dth.getCurrentDate("dd-MM-yyyy")).toString() + "'"
+        )
+
+        var drink_water = 0f
+        for (k in arr_data.indices) {
+            drink_water += if (URLFactory.WATER_UNIT_VALUE.equalsIgnoreCase("ml")){
+                arr_data[k]["ContainerValue"]!!.toDouble().toFloat()
+            } else{
+                arr_data[k]["ContainerValueOZ"]!!.toDouble().toFloat()
+            }
+        }
+
+        return mContext.resources.getString(R.string.str_have_u_had_any_water_yet)
+    }
+
+    fun check_blank_data(data: String?): Boolean {
+        return data == "" || data!!.isEmpty() || data.isEmpty() || data == "null" || data == null
+    }
+
+    fun getdata(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
+        val maplist = ArrayList<HashMap<String, String>>()
+
+        var query = "SELECT * FROM $table_name"
+
+        query += " where $where_con"
+
+        val c: Cursor = Constant.SDB!!.rawQuery(query, null)
+
+        println("SELECT QUERY : $query")
+
+        if (c.moveToFirst()) {
+            do {
+                val map = HashMap<String, String>()
+                for (i in 0 until c.columnCount) {
+                    map[c.getColumnName(i)] = c.getString(i)
+                }
+
+                maplist.add(map)
+            } while (c.moveToNext())
+        }
+
+        return maplist
+    }
+
+    companion object {
+        private const val NOTIFICATION_CHANNEL_ID = "10001"
+        private const val NOTIFICATION_SILENT_CHANNEL_ID = "10002"
+        private const val NOTIFICATION_VIBRATE_CHANNEL_ID = "10003"
+        private const val NOTIFICATION_SILENT_VIBRATE_CHANNEL_ID = "10004"
     }
 }

@@ -7,8 +7,7 @@
         android:layout_marginStart="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:text="@string/enter_custom_input_title">
+        android:textColor="@color/black">
     </TextView>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -23,7 +22,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLength="10"
-                android:hint="@string/enter_custom_input"
                 android:inputType="numberSigned" />
     </com.google.android.material.textfield.TextInputLayout>
 </androidx.cardview.widget.CardView>

@@ -1,27 +1,27 @@
 package rpt.tool.mementobibere.utils.helpers
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import androidx.lifecycle.MutableLiveData
-import rpt.tool.mementobibere.data.models.MaxMinChartModel
-import rpt.tool.mementobibere.utils.data.appmodel.ReachedGoal
-import rpt.tool.mementobibere.utils.extensions.toCalendar
-import rpt.tool.mementobibere.utils.extensions.toMonth
-import rpt.tool.mementobibere.utils.extensions.toReachedStatsString
-import rpt.tool.mementobibere.utils.extensions.toYear
+import android.os.Environment
+import rpt.tool.mementobibere.basic.appbasiclibs.utils.Database_Helper
+import rpt.tool.mementobibere.utils.AppUtils
+import java.io.File
 
 
-class SqliteHelper(val context: Context) : SQLiteOpenHelper(
+class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelper(
     context,
     DATABASE_NAME, null,
     DATABASE_VERSION
 ) {
 
+    var dh: Database_Helper = Database_Helper(context, actvity)
+
     companion object {
-        private const val DATABASE_VERSION = 7
+        private const val DATABASE_VERSION = 8
         private const val DATABASE_NAME = "RptBibere"
         private const val TABLE_STATS = "stats"
         private const val TABLE_INTOOK_COUNTER = "intook_count"
@@ -42,13 +42,24 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-
         addFirstTable(db)
 
         addNewTables(db)
 
         addAvisTable(db)
 
+        deleteDB(db)
+    }
+
+    private fun deleteDB(db: SQLiteDatabase?) {
+        db!!.execSQL("DROP TABLE IF EXISTS $TABLE_STATS")
+        db!!.execSQL("DROP TABLE IF EXISTS $TABLE_INTOOK_COUNTER")
+        db!!.execSQL("DROP TABLE IF EXISTS $TABLE_REACHED")
+        db!!.execSQL("DROP TABLE IF EXISTS $TABLE_AVIS")
+        val data: File = Environment.getDataDirectory()
+        val currentDBPath = "/data/rpt.tool.mementobibere/databases/$DATABASE_NAME"
+        val currentDB = File(data, currentDBPath)
+        val deleted = SQLiteDatabase.deleteDatabase(currentDB)
     }
 
     private fun addFirstTable(db: SQLiteDatabase?) {
@@ -84,36 +95,11 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) =
         if(newVersion > oldVersion){
             var counter = oldVersion
-            if(counter==1){
+            if (counter<8){
                 counter += 1
-                db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_UNIT VARCHAR(250)")
-                db!!.execSQL("UPDATE $TABLE_STATS set $KEY_UNIT = \"ml\"")
-            }
-            if(oldVersion<3){
-                counter += 1
-                addNewTables(db!!)
-            }
-            if(counter<4){
-                counter += 1
-                addAvisTable(db!!)
-            }
-            if(counter<5){
-                counter += 1
-                db!!.execSQL("UPDATE $TABLE_INTOOK_COUNTER set $KEY_INTOOK_COUNT = 7 WHERE $KEY_INTOOK_COUNT = 5")
-            }
-            if (counter<6){
-                counter += 1
-                db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_MONTH VARCHAR(200)")
-                db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_YEAR VARCHAR(200)")
-                updateValuesOfStats(db!!)
-                updateValuesOfCounter(db!!)
-            }
-            if (counter<7){
-                counter += 1
-                db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_N_INTOOK FLOAT")
-                db!!.execSQL("ALTER TABLE $TABLE_STATS ADD COLUMN $KEY_N_TOTAL_INTAKE FLOAT")
-                updateValuesOfIntake(db!!)
-            } else {
+                migrate(db)
+                deleteDB(db)
+            }else {
             }
         }
         else{
@@ -121,17 +107,189 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
             db!!.execSQL("DROP TABLE IF EXISTS $TABLE_INTOOK_COUNTER")
             db!!.execSQL("DROP TABLE IF EXISTS $TABLE_REACHED")
             db!!.execSQL("DROP TABLE IF EXISTS $TABLE_AVIS")
-            onCreate(db)
         }
 
+    private fun migrate(db: SQLiteDatabase?) {
+        //aggiorna le unità
+        var selectQuery = "SELECT * FROM $TABLE_STATS ORDER BY $KEY_DATE DESC"
+        db!!.rawQuery(selectQuery, null).use{ it ->
+            if (it.moveToFirst()) {
+                for (i in 0 until it.count) {
+                    var unit = it.getString(4)
+                    var intook = it.getFloat(7)
+                    var total = it.getFloat(8)
+                    var id = it.getInt(0)
+                    if(unit=="0z UK"){
+                        intook = AppUtils.ozUSToozUK(intook)
+                        total = AppUtils.ozUSToozUK(total)
+                        unit = "fl oz"
+                        db!!.execSQL("UPDATE $TABLE_STATS set $KEY_N_INTOOK = $intook, $KEY_N_TOTAL_INTAKE = $total," +
+                                "$KEY_UNIT = '$unit' WHERE $KEY_ID = $id")
+                    }
+                    else if(unit=="0z US"){
+                        unit = "fl oz"
+                        db!!.execSQL("UPDATE $TABLE_STATS set $KEY_UNIT = '$unit' WHERE $KEY_ID = $id")
+                    }
+                    it.moveToNext()
+                }
+            }
+        }
+        selectQuery = "SELECT * FROM $TABLE_REACHED ORDER BY $KEY_DATE DESC"
+        db!!.rawQuery(selectQuery, null).use{ it ->
+            if (it.moveToFirst()) {
+                for (i in 0 until it.count) {
+                    var unit = it.getString(3)
+                    var qta = it.getFloat(2)
+                    var id = it.getInt(0)
+                    if(unit=="0z UK"){
+                        qta = AppUtils.ozUSToozUK(qta)
+                        unit = "fl oz"
+                        db!!.execSQL("UPDATE $TABLE_REACHED set $KEY_QTA = $qta," +
+                                "$KEY_UNIT = '$unit' WHERE $KEY_ID = $id")
+                    }
+                    else if(unit=="0z US"){
+                        unit = "fl oz"
+                        db!!.execSQL("UPDATE $TABLE_REACHED set $KEY_UNIT = '$unit' " +
+                                "WHERE $KEY_ID = $id")
+                    }
+                    it.moveToNext()
+                }
+            }
+        }
+        //migra le tabelle
+        insertDataToNewDb(db)
+    }
+
+    private fun insertDataToNewDb(db: SQLiteDatabase) {
+        insertDrinkDetails(db)
+        insertReached(db)
+        insertAvis(db)
+    }
+
+    private fun insertDrinkDetails(db: SQLiteDatabase) {
+        var selectQuery = "SELECT * FROM $TABLE_STATS ORDER BY $KEY_DATE DESC"
+        db!!.rawQuery(selectQuery, null).use{ it ->
+            if (it.moveToFirst()) {
+                for (i in 0 until it.count) {
+                    var date = it.getString(1)
+                    var unit = it.getString(4)
+                    var intook = it.getFloat(7)
+                    var total = it.getFloat(8)
+                    when(unit){
+                        "fl oz"->{
+                            var containerValue = AppUtils.ozUKToMl(intook)
+                            var containerValueOZ = intook
+                            var containerMeasure = intook
+                            var drinkDate = date
+                            var drinkTime = "00:00"
+                            var drinkDateTime = "$date $drinkTime"
+                            var today = AppUtils.ozUKToMl(total)
+                            var todayOZ = total
+
+                            val initialValues = ContentValues()
+                            initialValues.put("ContainerValue", "" + containerValue)
+                            initialValues.put("ContainerValueOZ", "" + containerValueOZ)
+                            initialValues.put("ContainerMeasure", "" + containerMeasure)
+                            initialValues.put("DrinkDate", "" + drinkDate)
+                            initialValues.put("DrinkTime", "" + drinkTime)
+                            initialValues.put("DrinkDateTime", "" + drinkDateTime)
+                            initialValues.put("TodayGoal", "" + today)
+                            initialValues.put("TodayGoalOZ", "" + todayOZ)
+
+                            dh.INSERT("tbl_drink_details", initialValues)
+                        }
+                        "ml"->{
+                            var containerValue = intook
+                            var containerValueOZ = AppUtils.mlToOzUK(intook)
+                            var containerMeasure = intook
+                            var drinkDate = date
+                            var drinkTime = "00:00"
+                            var drinkDateTime = "$date $drinkTime"
+                            var today = total
+                            var todayOZ = AppUtils.mlToOzUK(total)
+
+                            val initialValues = ContentValues()
+                            initialValues.put("ContainerValue", "" + containerValue)
+                            initialValues.put("ContainerValueOZ", "" + containerValueOZ)
+                            initialValues.put("ContainerMeasure", "" + containerMeasure)
+                            initialValues.put("DrinkDate", "" + drinkDate)
+                            initialValues.put("DrinkTime", "" + drinkTime)
+                            initialValues.put("DrinkDateTime", "" + drinkDateTime)
+                            initialValues.put("TodayGoal", "" + today)
+                            initialValues.put("TodayGoalOZ", "" + todayOZ)
+
+                            dh.INSERT("tbl_drink_details", initialValues)
+                        }
+                    }
+                    it.moveToNext()
+                }
+            }
+        }
+    }
+
+    private fun insertReached(db: SQLiteDatabase) {
+        var selectQuery = "SELECT * FROM $TABLE_REACHED ORDER BY $KEY_DATE DESC"
+        db!!.rawQuery(selectQuery, null).use{ it ->
+            if (it.moveToFirst()) {
+                for (i in 0 until it.count) {
+                    var unit = it.getString(3)
+                    var date = it.getString(1)
+                    var qta = it.getFloat(2)
+                    when(unit){
+                        "fl oz"->{
+                            var containerValue = AppUtils.ozUKToMl(qta)
+                            var containerValueOZ = qta
+                            var drinkDate = date
+
+                            val initialValues = ContentValues()
+                            initialValues.put("ContainerValue", "" + containerValue)
+                            initialValues.put("ContainerValueOZ", "" + containerValueOZ)
+                            initialValues.put("Date", "" + drinkDate)
+
+                            dh.INSERT("tbl_goal_reached", initialValues)
+                        }
+                        "ml"->{
+                            var containerValue = qta
+                            var containerValueOZ = AppUtils.mlToOzUK(qta)
+                            var drinkDate = date
+
+                            val initialValues = ContentValues()
+                            initialValues.put("ContainerValue", "" + containerValue)
+                            initialValues.put("ContainerValueOZ", "" + containerValueOZ)
+                            initialValues.put("Date", "" + drinkDate)
+
+                            dh.INSERT("tbl_goal_reached", initialValues)
+                        }
+                    }
+                    it.moveToNext()
+                }
+            }
+        }
+    }
+
+    private fun insertAvis(db: SQLiteDatabase) {
+        var selectQuery = "SELECT * FROM $TABLE_AVIS ORDER BY $KEY_DATE DESC"
+        db!!.rawQuery(selectQuery, null).use{ it ->
+            if (it.moveToFirst()) {
+                for (i in 0 until it.count) {
+                    var date = it.getString(1)
+                    val initialValues = ContentValues()
+                    initialValues.put("BloodDonorDate", "" + date)
+
+                    dh.INSERT("tbl_blood_donor", initialValues)
+                    it.moveToNext()
+                }
+            }
+        }
+    }
 
     private fun updateValuesOfStats(db: SQLiteDatabase) {
         val selectQuery = "SELECT * FROM $TABLE_STATS ORDER BY $KEY_DATE DESC"
         db.rawQuery(selectQuery, null).use{ it ->
             if (it.moveToFirst()) {
                 for (i in 0 until it.count) {
-                    var month = it.getString(1).toMonth()
-                    var year = it.getString(1).toYear()
+                    var month = it.getString(1)
+                    var year = it.getString(1)
                     var id = it.getInt(0)
                     db!!.execSQL("UPDATE $TABLE_STATS set $KEY_MONTH = $month, $KEY_YEAR = $year WHERE $KEY_ID = $id")
                     it.moveToNext()
@@ -172,220 +330,13 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
             }
         }
     }
-    fun addAll(date: String, intook: Float, totalintake: Float, unit: String, month: String,
-               year: String): Long {
-        val selectQuery = "SELECT $KEY_N_INTOOK FROM $TABLE_STATS WHERE $KEY_DATE = ?"
-        if (checkExistance(date,selectQuery) == 0) {
-            val values = ContentValues()
-            values.put(KEY_DATE, date)
-            values.put(KEY_N_INTOOK, intook)
-            values.put(KEY_N_TOTAL_INTAKE, totalintake)
-            values.put(KEY_UNIT, unit)
-            values.put(KEY_MONTH, month)
-            values.put(KEY_YEAR, year)
-            val db = this.writableDatabase
-            val response = db.insert(TABLE_STATS, null, values)
-            db.close()
-            return response
-        }
-        return -1
-    }
 
-    fun getAllStats(): Cursor {
-        val selectQuery = "SELECT * FROM $TABLE_STATS ORDER BY $KEY_DATE DESC"
-        val db = this.readableDatabase
-        return db.rawQuery(selectQuery, null)
-    }
-    fun getIntook(date: String): Float {
-        val selectQuery = "SELECT $KEY_N_INTOOK FROM $TABLE_STATS WHERE $KEY_DATE = ?"
-        val db = this.readableDatabase
-        var intook = 0f
-        db.rawQuery(selectQuery, arrayOf(date)).use {
-            if (it.moveToFirst()) {
-                intook = it.getFloat(it.getColumnIndexOrThrow(KEY_N_INTOOK))
-            }
-        }
-        return intook
-    }
-    fun resetIntook(date: String): Int {
-        val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(KEY_N_INTOOK, 0)
-
-        val response = db.update(TABLE_STATS, contentValues, "$KEY_DATE = ?", arrayOf(date))
-        db.close()
-        return response
-    }
-    fun addIntook(date: String, selectedOption: Float, unit: String, month: String, year: String): Int {
-        val intook = getIntook(date)
-        val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(KEY_N_INTOOK, intook + selectedOption)
-        contentValues.put(KEY_UNIT,unit)
-        return db.update(TABLE_STATS, contentValues,
-            "$KEY_DATE = ? AND $KEY_MONTH = ? AND $KEY_YEAR = ?",
-            arrayOf(date,month,year))
-    }
     private fun checkExistance(date: String, query: String): Int {
         val db = this.readableDatabase
         db.rawQuery(query, arrayOf(date)).use {
             if (it.moveToFirst()) {
                 return it.count
             }
-        }
-        return 0
-    }
-    fun getTotalIntake(date: String): Cursor{
-        val selectQuery = "SELECT $KEY_UNIT, $KEY_N_TOTAL_INTAKE FROM $TABLE_STATS WHERE $KEY_DATE = ?"
-        val db = this.readableDatabase
-        return db.rawQuery(selectQuery, arrayOf(date))
-    }
-    fun getTotalIntakeValue(date: String) : Float{
-        var total = 0f
-        getTotalIntake(date).use{
-            if (it.moveToFirst()) {
-                total = it.getFloat(1)
-            }
-        }
-        return total
-    }
-
-    fun getAllStatsYear(year : String): Cursor {
-        val selectQuery = "SELECT * FROM $TABLE_STATS WHERE $KEY_YEAR = ? ORDER BY $KEY_DATE DESC"
-        val db = this.readableDatabase
-        return db.rawQuery(selectQuery, arrayOf(year))
-    }
-    fun getAllStatsMonthly(month : String, year : String): Cursor {
-        val selectQuery = "SELECT * FROM $TABLE_STATS WHERE $KEY_YEAR = ? AND $KEY_MONTH = ? ORDER BY $KEY_DATE DESC"
-        val db = this.readableDatabase
-        return db.rawQuery(selectQuery, arrayOf(year,month))
-    }
-
-    fun delete() : Int {
-        val db = this.writableDatabase
-        var response = db.delete(TABLE_STATS,"1",null)
-        db.close()
-        return response
-    }
-    fun updateTotalIntake(date: String, totalintake: Float, unit: String): Int {
-        val db = this.writableDatabase
-        val update = "UPDATE $TABLE_STATS SET $KEY_N_TOTAL_INTAKE = $totalintake, $KEY_UNIT = \"$unit\" WHERE $KEY_DATE = \"$date\""
-        db.execSQL(update)
-        db.close()
-        return 1
-    }
-    fun addOrUpdateIntookCounter(date: String, selectedOption: Float, value: Int): Int {
-        val intook = getIntookCounter(date,selectedOption)
-        if(intook==-1){
-            val values = ContentValues()
-            values.put(KEY_DATE, date)
-            values.put(KEY_INTOOK, selectedOption)
-            values.put(KEY_INTOOK_COUNT, 1)
-            val db = this.writableDatabase
-            val response = db.insert(TABLE_INTOOK_COUNTER, null, values)
-            return response.toInt()
-        }
-        else{
-            val countNow = "SELECT $KEY_INTOOK_COUNT FROM $TABLE_INTOOK_COUNTER WHERE $KEY_DATE = ? AND $KEY_INTOOK = ?"
-            var counter = 0
-            val db = this.writableDatabase
-            db.rawQuery(countNow, arrayOf(date,selectedOption.toString())).use {
-                if (it.moveToFirst()) {
-                    counter = it.getInt(it.getColumnIndexOrThrow(KEY_INTOOK_COUNT))
-                }
-            }
-            val contentValues = ContentValues()
-            contentValues.put(KEY_INTOOK_COUNT,  counter + value)
-
-            return db.update(TABLE_INTOOK_COUNTER, contentValues,
-                "$KEY_DATE = ? AND $KEY_INTOOK = ?",
-                arrayOf(date,selectedOption.toString()))
-        }
-        return -1
-    }
-    fun resetIntookCounter(date: String): Int{
-        val db = this.writableDatabase
-        val response = db.delete(TABLE_INTOOK_COUNTER, "$KEY_DATE = ?", arrayOf(date))
-        db.close()
-        return response
-    }
-    private fun getIntookCounter(date: String, selectedOption: Float): Int {
-        val selectQuery = "SELECT $KEY_INTOOK FROM $TABLE_INTOOK_COUNTER WHERE $KEY_DATE = ? AND $KEY_INTOOK = ?"
-        val db = this.readableDatabase
-        var intook = -1
-        db.rawQuery(selectQuery, arrayOf(date,selectedOption.toString())).use {
-            if (it.moveToFirst()) {
-                intook = it.getInt(it.getColumnIndexOrThrow(KEY_INTOOK))
-            }
-        }
-        return intook
-    }
-
-    fun getSumOfDailyIntookCounter(date: String): Cursor {
-        val selectQuery = "SELECT $KEY_DATE, SUM($KEY_INTOOK_COUNT) as count " +
-                "FROM $TABLE_INTOOK_COUNTER WHERE $KEY_DATE = ? " +
-                "GROUP BY $KEY_DATE HAVING SUM($KEY_INTOOK_COUNT) > 0"
-        val db = this.readableDatabase
-        return db.rawQuery(selectQuery, arrayOf(date))
-    }
-
-    fun getDailyIntookStats(date: String): Cursor {
-        val selectQuery = "SELECT * FROM $TABLE_INTOOK_COUNTER WHERE $KEY_DATE = ?"
-        val db = this.readableDatabase
-        return db.rawQuery(selectQuery, arrayOf(date))
-    }
-    fun getMaxTodayIntookStats(date: String): List<MaxMinChartModel> {
-        val selectQuery = "SELECT $KEY_INTOOK, $KEY_INTOOK_COUNT FROM $TABLE_INTOOK_COUNTER  WHERE $KEY_DATE = ? ORDER BY $KEY_INTOOK_COUNT DESC"
-        val db = this.readableDatabase
-        val list : ArrayList<MaxMinChartModel> = arrayListOf<MaxMinChartModel>()
-        db.rawQuery(selectQuery, arrayOf(date)).use {
-            if (it.moveToFirst()) {
-                for(i in 0 until it.count){
-                    list.add(MaxMinChartModel(it.getInt(0),it.getFloat(1)))
-                    it.moveToNext()
-                }
-            }
-        }
-        return list
-    }
-    fun getMinTodayIntookStats(date: String): List<MaxMinChartModel> {
-        val selectQuery = "SELECT $KEY_INTOOK ,$KEY_INTOOK_COUNT FROM $TABLE_INTOOK_COUNTER  WHERE $KEY_DATE = ? ORDER BY $KEY_INTOOK_COUNT ASC"
-        val db = this.readableDatabase
-        val list : ArrayList<MaxMinChartModel> = arrayListOf<MaxMinChartModel>()
-        db.rawQuery(selectQuery, arrayOf(date)).use {
-            if (it.moveToFirst()) {
-                for(i in 0 until it.count){
-                    list.add(MaxMinChartModel(it.getInt(0),it.getFloat(1)))
-                    it.moveToNext()
-                }
-            }
-        }
-        return list
-    }
-
-    fun addReachedGoal(date: String, value: Float, unit: String) : Long {
-        val selectQuery = "SELECT * FROM $TABLE_REACHED WHERE $KEY_DATE = ?"
-        if (checkExistance(date,selectQuery) == 0) {
-            val values = ContentValues()
-            values.put(KEY_DATE, date)
-            values.put(KEY_QTA, value)
-            values.put(KEY_UNIT, unit)
-            val db = this.writableDatabase
-            val response = db.insert(TABLE_REACHED, null, values)
-            db.close()
-            return response
-        }
-        return -1
-    }
-
-    fun removeReachedGoal(date: String) : Int{
-        val selectQuery = "SELECT * FROM $TABLE_REACHED WHERE $KEY_DATE = ?"
-        if(checkExistance(date,selectQuery)>0){
-            val deleteQuery = "DELETE FROM $TABLE_REACHED  WHERE $KEY_DATE = ?"
-            val db = this.writableDatabase
-            db.rawQuery(deleteQuery, arrayOf(date))
-            db.close()
-            return 1
         }
         return 0
     }
@@ -399,27 +350,7 @@ class SqliteHelper(val context: Context) : SQLiteOpenHelper(
         return dbToUse.rawQuery(selectQuery, null)
     }
 
-    fun addAvis(date: String) : Long {
-        val selectQuery = "SELECT * FROM $TABLE_AVIS WHERE $KEY_DATE = ?"
-        if (checkExistance(date,selectQuery) == 0) {
-            val values = ContentValues()
-            values.put(KEY_DATE, date)
-            val db = this.writableDatabase
-            val response = db.insert(TABLE_AVIS, null, values)
-            db.close()
-            return response
-        }
-        return -1
-    }
-    fun getAvisDay(date: String): Boolean {
-        val selectQuery = "SELECT * FROM $TABLE_AVIS WHERE $KEY_DATE = ?"
-        val db = this.readableDatabase
-        var day = false
-        db.rawQuery(selectQuery, arrayOf(date)).use {
-            if (it.moveToFirst()) {
-                day = true
-            }
-        }
-        return day
+    fun start() {
+        val db = this.writableDatabase
     }
 }
