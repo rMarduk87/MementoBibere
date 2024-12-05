@@ -19,6 +19,7 @@ class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelpe
 ) {
 
     var dh: Database_Helper = Database_Helper(context, actvity)
+    var create = true
 
     companion object {
         private const val DATABASE_VERSION = 8
@@ -42,11 +43,13 @@ class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelpe
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        addFirstTable(db)
+        if(create){
+            addFirstTable(db)
 
-        addNewTables(db)
+            addNewTables(db)
 
-        addAvisTable(db)
+            addAvisTable(db)
+        }
 
         deleteDB(db)
     }
@@ -350,7 +353,8 @@ class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelpe
         return dbToUse.rawQuery(selectQuery, null)
     }
 
-    fun start() {
+    fun start(boolean: Boolean) {
+        create = boolean
         val db = this.writableDatabase
     }
 }

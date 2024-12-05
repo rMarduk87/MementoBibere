@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
@@ -32,32 +34,35 @@ class DrinkFragment :
 
         dateNow = AppUtils.getCurrentOnlyDate()!!
 
-        /*if(ph!!.getBoolean(URLFactory.BLOOD_DONOR) && !dh!!.IS_EXISTS(
+        if(ph!!.getBoolean(URLFactory.BLOOD_DONOR) && !dh!!.IS_EXISTS(
                     "tbl_blood_donor",
                     "Date='$dateNow'"
                 )){
-            binding.calendarAvis.visibility = VISIBLE
+            binding.avisLayout.visibility = VISIBLE
         }else if(ph!!.getBoolean(URLFactory.BLOOD_DONOR) && dh!!.IS_EXISTS(
                 "tbl_blood_donor",
                 "Date='$dateNow'"
             )){
-            binding.calendarAvis.visibility = VISIBLE
-            binding.infoAvis.visibility = VISIBLE
+            binding.avisLayout.visibility = VISIBLE
+            binding.avisInfo.visibility = VISIBLE
         }
         else{
-            binding.calendarAvis.visibility = GONE
-            binding.infoAvis.visibility = GONE
-        }*/
+            binding.avisLayout.visibility = GONE
+            binding.avisInfo.visibility = GONE
+        }
     }
 
     override fun onStart() {
         super.onStart()
 
 
-        /*if(sqliteHelper.getAvisDay(dateNow)){
-            binding.tvIntook.setTextColor(resources.getColor(R.color.red))
-            binding.tvTotalIntake.setTextColor(resources.getColor(R.color.red))
-        }*/
+        if(dh!!.IS_EXISTS(
+                "tbl_blood_donor",
+                "Date='$dateNow'"
+            )){
+            binding.lblTotalGoal.setTextColor(resources.getColor(R.color.red))
+            binding.lblTotalDrunk.setTextColor(resources.getColor(R.color.red))
+        }
 
         if(!ph!!.getBoolean(URLFactory.SET_USER_GENDER) || !ph!!.getBoolean(URLFactory.SET_USER_NAME)
             || !ph!!.getBoolean(URLFactory.SET_BLOOD_DONOR) ||

@@ -146,7 +146,7 @@ class MainActivity : BaseAppCompatActivity() {
 
     private fun initConversion() {
         sqliteHelper = SqliteHelper(this,this)
-        sqliteHelper.start()
+        sqliteHelper.start(ph!!.getBoolean(URLFactory.MIGRATION))
         covertSharedPref()
     }
 
@@ -172,7 +172,7 @@ class MainActivity : BaseAppCompatActivity() {
             var wake = SharedPreferencesManager.wakeUpTime
 
             if(weight == "0"){
-                weight = "80"
+                weight = if(weightUnit) "80" else "176"
             }
 
             ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)

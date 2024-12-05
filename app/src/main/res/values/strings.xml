@@ -321,6 +321,7 @@
     <string name="str_donor">Donor</string>
     <string name="str_non_donor">Non-donor</string>
     <string name="str_no_data">Welcome back to Let\'s Hydrate\nTo improve the calculation of your daily water requirement, some data has been added, enter them in the Info screen (you can also update the pre-existing ones)</string>
+    <string name="donor_date">Donor date</string>
 
     <!-- Country Code -->
     <string-array name="CountryCodes" >
