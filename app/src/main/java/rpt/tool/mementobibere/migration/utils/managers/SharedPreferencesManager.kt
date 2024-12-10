@@ -1,4 +1,4 @@
-package rpt.tool.mementobibere.migration.utils
+package rpt.tool.mementobibere.migration.utils.managers
 
 import android.content.Context
 import android.content.SharedPreferences

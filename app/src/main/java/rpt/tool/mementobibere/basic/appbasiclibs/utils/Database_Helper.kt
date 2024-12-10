@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
+import androidx.core.database.getStringOrNull
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -177,7 +178,9 @@ class Database_Helper
             do {
                 val map = HashMap<String, String>()
                 for (i in 0 until c.columnCount) {
-                    map[c.getColumnName(i)] = c.getString(i)
+                    if(c.getStringOrNull(i) != null){
+                        map[c.getColumnName(i)] = c.getString(i)
+                    }
                 }
 
                 maplist.add(map)
@@ -202,7 +205,9 @@ class Database_Helper
             do {
                 val map = HashMap<String, String>()
                 for (i in 0 until c.columnCount) {
-                    map[c.getColumnName(i)] = c.getString(i)
+                    if(c.getStringOrNull(i) != null){
+                        map[c.getColumnName(i)] = c.getString(i)
+                    }
                 }
 
                 maplist.add(map)
@@ -234,9 +239,10 @@ class Database_Helper
             do {
                 val map = HashMap<String, String>()
                 for (i in 0 until c.columnCount) {
-                    map[c.getColumnName(i)] = c.getString(i)
+                    if(c.getStringOrNull(i) != null){
+                        map[c.getColumnName(i)] = c.getString(i)
+                    }
                 }
-
                 maplist.add(map)
             } while (c.moveToNext())
         }

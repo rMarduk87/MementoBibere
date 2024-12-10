@@ -1,5 +1,6 @@
 package rpt.tool.mementobibere.ui.userinfo.info
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
@@ -11,6 +12,7 @@ import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.basic.appbasiclibs.BaseAppCompatActivity
 import rpt.tool.mementobibere.databinding.FragmentUserInfoRegistryNotificationBinding
 import rpt.tool.mementobibere.utils.URLFactory
+import rpt.tool.mementobibere.utils.log.e
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -33,21 +35,21 @@ class UserInfoRegistryNotification :
         setCount()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
             setCount()
-        } else {
         }
-        
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun body() {
-        binding.rdo15.text = "15 " + sh!!.get_string(R.string.str_min)
-        binding.rdo30.text = "30 " + sh!!.get_string(R.string.str_min)
-        binding.rdo45.text = "45 " + sh!!.get_string(R.string.str_min)
-        binding.rdo60.text = "1 " + sh!!.get_string(R.string.str_hour)
+        binding.rdo15.text = "15 ${sh!!.get_string(R.string.str_min)}"
+        binding.rdo30.text = "30 ${sh!!.get_string(R.string.str_min)}"
+        binding.rdo45.text = "45 ${sh!!.get_string(R.string.str_min)}"
+        binding.rdo60.text = "1 ${sh!!.get_string(R.string.str_hour)}"
         
         binding.txtWakeupTime.setOnClickListener {
             openAutoTimePicker(binding.txtWakeupTime, true)
@@ -66,7 +68,8 @@ class UserInfoRegistryNotification :
         binding.rdo60.setOnClickListener { setCount() }
     }
 
-    fun openAutoTimePicker(appCompatTextView: AppCompatTextView?, isFrom: Boolean) {
+    @SuppressLint("SetTextI18n")
+    private fun openAutoTimePicker(appCompatTextView: AppCompatTextView?, isFrom: Boolean) {
         val onTimeSetListener =
             TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute, second ->
                 var formatedDate = ""
@@ -85,9 +88,9 @@ class UserInfoRegistryNotification :
                     }
                     
                     time = "$hourOfDay:$minute:00"
-                    dt = sdf.parse(time)
+                    dt = sdf.parse(time)!!
                     formatedDate = sdfs.format(dt)
-                    appCompatTextView!!.text = "" + formatedDate
+                    appCompatTextView!!.text = formatedDate
                     
                     setCount()
                 } catch (e: ParseException) {
@@ -150,8 +153,9 @@ class UserInfoRegistryNotification :
                     (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)).toInt() / (1000 * 60)
 
                 return min
-            } catch (e: ParseException) {
-                e.printStackTrace()
+            } catch (ex: ParseException) {
+                ex.message?.let { e(Throwable(ex), it) }
+                ex.printStackTrace()
             }
 
             return 0
@@ -169,7 +173,8 @@ class UserInfoRegistryNotification :
                 date2 = simpleDateFormat.parse(binding.txtBedTime.getText().toString().trim { it <= ' ' })
 
                 return date1.time > date2.time
-            } catch (e: Exception) {
+            } catch (ex: Exception) {
+                ex.message?.let { e(Throwable(ex), it) }
             }
 
             return false

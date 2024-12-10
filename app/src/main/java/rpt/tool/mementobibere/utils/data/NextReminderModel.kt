@@ -1,10 +1,11 @@
 package rpt.tool.mementobibere.utils.data
 
-class NextReminderModel(private val millesecond: Long, val time: String) : Comparable<NextReminderModel> {
-    override fun compareTo(f: NextReminderModel): Int {
-        return if (millesecond > f.millesecond) {
+class NextReminderModel(val millisecond: Long, val time: String) : Comparable<NextReminderModel> {
+
+    override fun compareTo(other: NextReminderModel): Int {
+        return if (millisecond > other.millisecond) {
             1
-        } else if (millesecond < f.millesecond) {
+        } else if (millisecond < other.millisecond) {
             -1
         } else {
             0

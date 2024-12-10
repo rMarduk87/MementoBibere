@@ -14,6 +14,7 @@ import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant.finish
 import rpt.tool.mementobibere.databinding.FragmentInitUserInfoBinding
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.log.d
+import rpt.tool.mementobibere.utils.log.e
 import rpt.tool.mementobibere.utils.receiver.MyAlarmManager.cancelRecurringAlarm
 import rpt.tool.mementobibere.utils.receiver.MyAlarmManager.scheduleAutoRecurringAlarm
 import rpt.tool.mementobibere.utils.view.adapters.UserInfoPagerAdapter
@@ -23,7 +24,7 @@ import java.util.Date
 import java.util.Locale
 
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "UNUSED_EXPRESSION")
 class InitUserInfoFragment:
     BaseFragment<FragmentInitUserInfoBinding>(FragmentInitUserInfoBinding::inflate),
     IOnBackPressed {
@@ -38,10 +39,8 @@ class InitUserInfoFragment:
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            requireActivity().window.navigationBarColor = requireContext().resources.getColor(
-                R.color.water_color)
-        }
+        requireActivity().window.navigationBarColor = requireContext().resources.getColor(
+            R.color.water_color)
     }
 
 
@@ -83,13 +82,13 @@ class InitUserInfoFragment:
         binding.viewPager.setOffscreenPageLimit(10)
         binding.dotsIndicator.setViewPager(binding.viewPager)
 
-        binding.btnBack.setOnClickListener(View.OnClickListener {
-            if (current_page_idx > 0);
+        binding.btnBack.setOnClickListener {
+            if (current_page_idx > 0)
             current_page_idx -= 1
             binding.viewPager.setCurrentItem(current_page_idx)
-        })
+        }
 
-        binding.btnNext.setOnClickListener(View.OnClickListener { //ah!!,customAlert(""+ph!!.getString(URLFactory.USER_NAME));
+        binding.btnNext.setOnClickListener(View.OnClickListener {
             if (current_page_idx === 0) {
                 if (sh!!.check_blank_data(ph!!.getString(URLFactory.USER_NAME))) {
                     ah!!.customAlert(sh!!.get_string(R.string.str_your_name_validation))
@@ -139,8 +138,6 @@ class InitUserInfoFragment:
                     ah!!.customAlert(sh!!.get_string(R.string.str_from_to_invalid_validation))
                     return@OnClickListener
                 }
-
-                //setAlarm();
             }
             if (current_page_idx < max_page - 1) {
                 current_page_idx += 1
@@ -149,490 +146,20 @@ class InitUserInfoFragment:
                 gotoHomeScreen()
             }
         })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*val is24h = android.text.format.DateFormat.is24HourFormat(requireContext())
-
-        requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-
-        wakeupTime = SharedPreferencesManager.wakeUpTime
-        sleepingTime = SharedPreferencesManager.sleepingTime
-
-        binding.etWakeUpTime.editText!!.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = wakeupTime
-
-            val mTimePicker = TimePickerDialog(
-                requireContext(),
-                { _, selectedHour, selectedMinute ->
-
-                    val time = Calendar.getInstance()
-                    time.set(Calendar.HOUR_OF_DAY, selectedHour)
-                    time.set(Calendar.MINUTE, selectedMinute)
-                    wakeupTime = time.timeInMillis
-
-                    binding.etWakeUpTime.editText!!.setText(
-                        String.format("%02d:%02d", selectedHour, selectedMinute)
-                    )
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), is24h
-            )
-            mTimePicker.setTitle(getString(R.string.select_wakeup_time))
-            mTimePicker.show()
-        }
-
-
-        binding.etSleepTime.editText!!.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = sleepingTime
-
-            val mTimePicker = TimePickerDialog(
-                requireContext(),
-                { _, selectedHour, selectedMinute ->
-
-                    val time = Calendar.getInstance()
-                    time.set(Calendar.HOUR_OF_DAY, selectedHour)
-                    time.set(Calendar.MINUTE, selectedMinute)
-                    sleepingTime = time.timeInMillis
-
-                    binding.etSleepTime.editText!!.setText(
-                        String.format("%02d:%02d", selectedHour, selectedMinute)
-                    )
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), is24h
-            )
-            mTimePicker.setTitle(getString(R.string.select_sleeping_time))
-            mTimePicker.show()
-        }
-
-        binding.etGender.editText!!.setOnClickListener {
-
-            val li = LayoutInflater.from(requireContext())
-            val promptsView = li.inflate(R.layout.custom_input_dialog2, null)
-
-            val alertDialogBuilder = AlertDialog.Builder(requireContext())
-            alertDialogBuilder.setView(promptsView)
-
-
-            val btnMan: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnMan)
-            val btnWoman: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnWoman)
-
-
-            btnMan.setOnClickListener{
-                gender = 0
-                SharedPreferencesManager.gender = gender
-                showMessage(
-                    getString(R.string.you_selected_man), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.MAN
-                )
-            }
-
-            btnWoman.setOnClickListener{
-                gender = 1
-                SharedPreferencesManager.gender = gender
-                showMessage(
-                    getString(R.string.you_selected_woman), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.WOMAN
-                )
-            }
-
-            alertDialogBuilder.setPositiveButton("OK") { _, _ ->
-                var text = if(gender==0){
-                    getString(R.string.man)
-                }
-                else{
-                    getString(R.string.woman)
-                }
-
-                binding.etGender.editText!!.setText(text)
-
-            }.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            val alertDialog = alertDialogBuilder.create()
-            alertDialog.show()
-        }
-
-        binding.btnAvis.setOnClickListener{
-            if(bloodDonor==0){
-                bloodDonor = 1
-                showMessage(getString(R.string.you_selected_avis), it)
-            }
-            else{
-                bloodDonor = 0
-                showMessage(getString(R.string.you_selected_no_avis), it)
-            }
-        }
-
-
-        binding.etWorkType.editText!!.setOnClickListener {
-
-            val li = LayoutInflater.from(requireContext())
-            val promptsView = li.inflate(R.layout.custom_input_dialog4, null)
-
-            val alertDialogBuilder = AlertDialog.Builder(requireContext())
-            alertDialogBuilder.setView(promptsView)
-
-
-            val btnCalm: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnCalm)
-            val btnNormal: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnNormal)
-            val btnLively: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnLively)
-            val btnIntense: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnIntense)
-
-
-            btnCalm.setOnClickListener{
-                workType = 0
-                SharedPreferencesManager.workType = workType
-                showMessage(
-                    getString(R.string.you_selected_calm), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.WORKTYPE, workType = workType
-                )
-            }
-
-            btnNormal.setOnClickListener{
-                workType = 1
-                SharedPreferencesManager.workType = workType
-                showMessage(
-                    getString(R.string.you_selected_normal), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.WORKTYPE, workType = workType
-                )
-            }
-
-            btnLively.setOnClickListener{
-                workType = 2
-                SharedPreferencesManager.workType = workType
-                showMessage(
-                    getString(R.string.you_selected_lively), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.WORKTYPE, workType = workType
-                )
-            }
-
-            btnIntense.setOnClickListener{
-                workType = 3
-                SharedPreferencesManager.workType = workType
-                showMessage(
-                    getString(R.string.you_selected_intense), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.WORKTYPE, workType = workType
-                )
-            }
-
-            alertDialogBuilder.setPositiveButton("OK") { _, _ ->
-                var text = when(workType){
-                    0->getString(R.string.calm)
-                    1->getString(R.string.normal)
-                    2->getString(R.string.lively)
-                    3->getString(R.string.intense)
-                    else -> {getString(R.string.calm)}
-                }
-
-                binding.etWorkType.editText!!.setText(text)
-
-            }.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-            }
-
-
-
-
-            val alertDialog = alertDialogBuilder.create()
-            alertDialog.show()
-        }
-
-        binding.etClimate.editText!!.setOnClickListener {
-
-            val li = LayoutInflater.from(requireContext())
-            val promptsView = li.inflate(R.layout.custom_input_dialog5, null)
-
-            val alertDialogBuilder = AlertDialog.Builder(requireContext())
-            alertDialogBuilder.setView(promptsView)
-
-
-            val btnCold: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnCold)
-            val btnFresh: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnFresh)
-            val btnMild: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnMild)
-            val btnTorrid: LottieAnimationView = promptsView
-                            .findViewById(R.id.btnTorrid)
-
-
-            btnCold.setOnClickListener{
-                climate = 0
-                SharedPreferencesManager.climate = climate
-                showMessage(
-                    getString(R.string.you_selected_cold), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.CLIMATE
-                )
-            }
-
-            btnFresh.setOnClickListener{
-                climate = 1
-                SharedPreferencesManager.climate = climate
-                showMessage(
-                    getString(R.string.you_selected_fresh), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.CLIMATE
-                )
-            }
-
-            btnMild.setOnClickListener{
-                climate = 2
-                SharedPreferencesManager.climate = climate
-                showMessage(
-                    getString(R.string.you_selected_mild), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.CLIMATE
-                )
-            }
-
-            btnTorrid.setOnClickListener{
-                climate = 3
-                SharedPreferencesManager.climate = climate
-                showMessage(
-                    getString(R.string.you_selected_torrid), it,
-                    type= rpt.tool.mementobibere.utils.AppUtils.Companion.TypeMessage.CLIMATE
-                )
-            }
-
-            alertDialogBuilder.setPositiveButton("OK") { _, _ ->
-                var text = when(climate){
-                    0->getString(R.string.cold)
-                    1->getString(R.string.fresh)
-                    2->getString(R.string.mild)
-                    3->getString(R.string.torrid)
-                    else -> {getString(R.string.cold)}
-                }
-
-                binding.etClimate.editText!!.setText(text)
-
-            }.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-            }
-
-            val alertDialog = alertDialogBuilder.create()
-            alertDialog.show()
-        }
-
-        binding.btnContinue.setOnClickListener {
-
-            val imm: InputMethodManager =
-                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(binding.initUserInfoParentLayout.windowToken, 0)
-
-            weight = binding.etWeight.editText!!.text.toString()
-
-
-            when {
-                TextUtils.isEmpty(weight) -> showError(getString(R.string.please_input_your_weight),it)
-
-                weight.toInt() > rpt.tool.mementobibere.utils.AppUtils.getMaxWeight(weightUnit) || weight.toInt() < rpt.tool.mementobibere.utils.AppUtils.getMinWeight(weightUnit) ->
-                    showError(getString(R.string.please_input_a_valid_weight), it)
-
-                !rpt.tool.mementobibere.utils.AppUtils.isValidDate(binding.etSleepTime.editText!!.text.toString(),binding.etWakeUpTime.editText!!.text.toString()) -> showError(getString(R.string.please_input_a_valid_rest_time), it)
-
-                TextUtils.isEmpty(binding.etGender.editText!!.text.toString()) -> showError(getString(R.string.gender_hint),it)
-                TextUtils.isEmpty(binding.etWorkType.editText!!.text.toString()) -> showError(getString(R.string.work_type_hint),it)
-                TextUtils.isEmpty(binding.etClimate.editText!!.text.toString()) -> showError(getString(R.string.climate_set_hint),it)
-
-                else -> {
-
-                    SharedPreferencesManager.weight = weight.toInt()
-                    SharedPreferencesManager.workType = workType
-                    SharedPreferencesManager.wakeUpTime = wakeupTime
-                    SharedPreferencesManager.sleepingTime = sleepingTime
-                    SharedPreferencesManager.firstRun = false
-                    SharedPreferencesManager.setWeight = true
-                    SharedPreferencesManager.setGender = true
-                    SharedPreferencesManager.setWorkOut = true
-                    SharedPreferencesManager.setClimate = true
-                    SharedPreferencesManager.startTutorial = false
-                    SharedPreferencesManager.bloodDonorKey = bloodDonor
-                    SharedPreferencesManager.setBloodDonor = true
-
-                    val totalIntake = rpt.tool.mementobibere.utils.AppUtils.calculateIntake(weight.toInt(), workType,weightUnit,
-                        gender, climate, 0,unit )
-                    val df = DecimalFormat("#")
-                    df.roundingMode = RoundingMode.CEILING
-                    SharedPreferencesManager.totalIntake = df.format(totalIntake).toFloat()
-                    val intent = Intent(activity, MainActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-        }
-
-        initBottomBars()*/
     }
 
-    /*private fun initBottomBars() {
-        val menu = binding.unitSystemBottomBar.menu
-        val menu2 = binding.weightSystemBottomBar.menu
-
-
-        for (i in rpt.tool.mementobibere.utils.AppUtils.listIdsInfoSystem.indices) {
-            menu.add(
-                MenuItemDescriptor.Builder(
-                    requireContext(),
-                    rpt.tool.mementobibere.utils.AppUtils.listIdsInfoSystem[i],
-                    rpt.tool.mementobibere.utils.AppUtils.listInfoSystem[i],
-                    rpt.tool.mementobibere.utils.AppUtils.listStringInfoSystem[i],
-                    Color.parseColor("#41B279")
-                )
-                    .build()
-            )
-        }
-
-        for (i in rpt.tool.mementobibere.utils.AppUtils.listIdsWeightSystem.indices) {
-            menu2.add(
-                MenuItemDescriptor.Builder(
-                    requireContext(),
-                    rpt.tool.mementobibere.utils.AppUtils.listIdsWeightSystem[i],
-                    rpt.tool.mementobibere.utils.AppUtils.listWeightSystem[i],
-                    rpt.tool.mementobibere.utils.AppUtils.listStringWeightSystem[i],
-                    Color.parseColor("#41B279")
-                )
-                    .build()
-            )
-        }
-
-        setWeightUnit()
-
-        binding.unitSystemBottomBar.onItemSelectedListener = { _, i, _ ->
-            when(i.id) {
-                R.id.icon_ml -> unit = 0
-                R.id.icon_oz_uk -> unit = 1
-                R.id.icon_oz_us -> unit = 2
-
-            }
-
-            setSystemUnit()
-
-        }
-
-        unit = SharedPreferencesManager.current_unitInt
-
-        when (unit) {
-            0 -> menu.select(R.id.icon_ml)
-            1 -> menu.select(R.id.icon_oz_uk)
-            2 -> menu.select(R.id.icon_oz_us)
-            else -> {
-                menu.select(R.id.icon_ml)
-                unit = 0
-            }
-        }
-
-        binding.weightSystemBottomBar.onItemSelectedListener = { _, i, _ ->
-            when(i.id) {
-                R.id.icon_kg -> weightUnit = 0
-                R.id.icon_lbl -> weightUnit = 1
-            }
-
-            setWeightUnit()
-
-        }
-
-    }*/
-
-    /*private fun setSystemUnit() {
-        SharedPreferencesManager.value_50 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(50f,unit)
-        SharedPreferencesManager.value_100 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(100f,unit)
-        SharedPreferencesManager.value_150 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(150f,unit)
-        SharedPreferencesManager.value_200 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(200f,unit)
-        SharedPreferencesManager.value_250 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(250f,unit)
-        SharedPreferencesManager.value_300 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(300f,unit)
-        SharedPreferencesManager.value_350 = rpt.tool.mementobibere.utils.AppUtils.firstConversion(350f,unit)
-        SharedPreferencesManager.new_unitInt = unit
-
-    }*/
-
-    /*private fun setWeightUnit() {
-        SharedPreferencesManager.weightUnit = weightUnit
-    }*/
-
-    /*@SuppressLint("InflateParams", "RestrictedApi")
-    private fun showError(error: String, view: View) {
-        val snackBar = Snackbar.make(view, "", Snackbar.LENGTH_SHORT)
-        val customSnackView: View =
-            layoutInflater.inflate(R.layout.error_toast_layout, null)
-        snackBar.view.setBackgroundColor(Color.TRANSPARENT)
-        val snackbarLayout = snackBar.view as Snackbar.SnackbarLayout
-
-        val text = customSnackView.findViewById<TextView>(R.id.tvMessage)
-        text.text = error
-
-        snackbarLayout.setPadding(0, 0, 0, 0)
-        snackbarLayout.addView(customSnackView, 0)
-        snackBar.show()
-    }*/
-
     fun isNextDayEnd(): Boolean {
-        val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val simpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
         var date1: Date? = null
         var date2: Date? = null
         try {
-            date1 = simpleDateFormat.parse(ph!!.getString(URLFactory.WAKE_UP_TIME))
-            date2 = simpleDateFormat.parse(ph!!.getString(URLFactory.BED_TIME))
+            date1 = ph!!.getString(URLFactory.WAKE_UP_TIME)?.let { simpleDateFormat.parse(it) }
+            date2 = ph!!.getString(URLFactory.BED_TIME)?.let { simpleDateFormat.parse(it) }
 
-            return date1.getTime() > date2.getTime()
+            return date1!!.time > date2!!.time
         } catch (e: java.lang.Exception) {
+            e.message?.let { e(Throwable(e), it) }
         }
 
         return false
@@ -647,7 +174,6 @@ class InitUserInfoFragment:
                 )
             )
         ) {
-            //ah!!,customAlert(sh!!.get_string(R.string.str_from_to_invalid_validation));
             return
         } else {
             val startTime: Calendar = Calendar.getInstance(Locale.getDefault())
@@ -703,7 +229,7 @@ class InitUserInfoFragment:
                             (startTime.get(Calendar.HOUR_OF_DAY).toString() + ":" + startTime.get(Calendar.MINUTE)).toString() + ":" + startTime.get(
                                 Calendar.SECOND
                             )
-                        dt = sdf.parse(time)
+                        dt = sdf.parse(time)!!
                         formatedDate = sdfs.format(dt)
 
                         if (!dh!!.IS_EXISTS(
@@ -745,6 +271,7 @@ class InitUserInfoFragment:
                             dh!!.INSERT("tbl_alarm_details", initialValues3)
                         }
                     } catch (e: java.lang.Exception) {
+                        e.message?.let { e(Throwable(e), it) }
                         e.printStackTrace()
                     }
 
@@ -776,7 +303,7 @@ class InitUserInfoFragment:
         }
     }
 
-    fun gotoHomeScreen() {
+    private fun gotoHomeScreen() {
         ph!!.savePreferences(URLFactory.HIDE_WELCOME_SCREEN, true)
 
         setAlarm()

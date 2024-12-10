@@ -1,5 +1,6 @@
 package rpt.tool.mementobibere.ui.userinfo.info
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Build
 import android.os.Bundle
@@ -34,6 +35,8 @@ class UserInfoGoalCalculationFragment :
         return str.replace(",", ".")
     }
 
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("SetTextI18n")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
@@ -56,6 +59,7 @@ class UserInfoGoalCalculationFragment :
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun body() {
         if (ph!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) {
             URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE)

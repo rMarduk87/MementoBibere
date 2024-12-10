@@ -1,9 +1,9 @@
-package rpt.tool.mementobibere.migration.ui.statistics.stats
+package rpt.tool.mementobibere.ui.statistics
 
 import rpt.tool.mementobibere.BaseFragment
-import rpt.tool.mementobibere.databinding.StatsFragmentBinding
+import rpt.tool.mementobibere.databinding.FragmentStatsBinding
 
-class StatsFragment : BaseFragment<StatsFragmentBinding>(StatsFragmentBinding::inflate){
+class StatsFragment : BaseFragment<FragmentStatsBinding>(FragmentStatsBinding::inflate){
 
    /* private var themeInt : Int = 0
     private var isMonth : Boolean = true

@@ -18,5 +18,9 @@ internal class Log {
             Timber.tag("$logPrefix$className").e(throwable, message)
             throwable.printStackTrace()
         }
+
+        fun logVerbose(logMessage: String, className: String) {
+            Timber.tag("$logPrefix$className").v(logMessage)
+        }
     }
 }

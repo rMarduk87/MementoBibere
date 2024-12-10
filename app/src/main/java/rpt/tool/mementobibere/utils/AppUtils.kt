@@ -1,7 +1,10 @@
 package rpt.tool.mementobibere.utils
 
+import android.R
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.ParseException
+import android.view.View
 import rpt.tool.mementobibere.migration.data.models.MonthChartModel
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -283,6 +286,28 @@ class AppUtils {
             }
             return 0
         }
+
+        fun getData(str: String): String {
+            return str.replace(",", ".")
+        }
+
+        fun getApplicationName(context: Context): String {
+            val applicationInfo = context.applicationInfo
+            val stringId = applicationInfo.labelRes
+            return if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else context.getString(
+                stringId
+            )
+        }
+
+        fun View.gone() {
+            this.visibility = View.GONE
+        }
+
+        fun View.visible() {
+            this.visibility = View.VISIBLE
+        }
+
+
 
         val PRIVATE_MODE = 0
 
