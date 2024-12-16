@@ -14,8 +14,6 @@ class DailyMoreThanTargetDialogFragment:BaseDialogFragment<DialogGoalTargetReach
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-
         if (URLFactory.WATER_UNIT_VALUE.equals(
                 "ml",
                 ignoreCase = true

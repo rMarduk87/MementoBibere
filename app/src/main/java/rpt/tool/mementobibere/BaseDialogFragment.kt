@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import androidx.annotation.StyleRes
 import androidx.annotation.UiThread
 import androidx.appcompat.view.ContextThemeWrapper
@@ -22,14 +23,8 @@ import rpt.tool.mementobibere.utils.Inflate
 abstract class BaseDialogFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) :
     DialogFragment() {
 
-    @StyleRes
-    protected open val style: Int? = null
-
     private val handler = Handler(Looper.getMainLooper())
 
-    override fun getTheme(): Int {
-        return style!!
-    }
 
     private var _baseBinding: FragmentBaseDialogBinding? = null
     private val baseBinding get() = _baseBinding!!
@@ -43,7 +38,6 @@ abstract class BaseDialogFragment<VB : ViewBinding>(private val inflate: Inflate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        style?.let { setStyle(ContextThemeWrapper(requireActivity(), it).themeResId, it) }
     }
 
     override fun onCreateView(
@@ -53,14 +47,15 @@ abstract class BaseDialogFragment<VB : ViewBinding>(private val inflate: Inflate
     ): View {
         _baseBinding = FragmentBaseDialogBinding.inflate(inflater, container, false)
         _binding = inflate.invoke(inflater, baseBinding.contentArea, true)
+        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.drawable_background_tra)
+        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
+        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return baseBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.drawable_background_tra)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
         manageDismissIcon()
     }
 

@@ -31,6 +31,10 @@ class UserInfoRegistryNotification :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        from_hour = spm!!.getInt(URLFactory.WAKE_UP_TIME_HOUR)
+        from_minute = spm!!.getInt(URLFactory.WAKE_UP_TIME_MINUTE)
+        to_hour = spm!!.getInt(URLFactory.BED_TIME_HOUR)
+        to_minute = spm!!.getInt(URLFactory.BED_TIME_MINUTE)
         body()
         setCount()
     }
@@ -135,32 +139,6 @@ class UserInfoRegistryNotification :
         tpd.accentColor = BaseAppCompatActivity.getThemeColor(requireContext())
     }
 
-    val difference: Int
-        get() {
-            val simpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-
-            var date1: Date? = null
-            var date2: Date? = null
-            try {
-                date1 =
-                    simpleDateFormat.parse(binding.txtWakeupTime.getText().toString().trim { it <= ' ' })
-                date2 = simpleDateFormat.parse(binding.txtBedTime.getText().toString().trim { it <= ' ' })
-
-                val difference = date2.time - date1.time
-                val days = (difference / (1000 * 60 * 60 * 24)).toInt()
-                val hours = ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60)).toInt()
-                val min =
-                    (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)).toInt() / (1000 * 60)
-
-                return min
-            } catch (ex: ParseException) {
-                ex.message?.let { e(Throwable(ex), it) }
-                ex.printStackTrace()
-            }
-
-            return 0
-        }
-
     val isNextDayEnd: Boolean
         get() {
             val simpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -208,30 +186,30 @@ class UserInfoRegistryNotification :
         if (total_minutes > 0) consume =
             Math.round(URLFactory.DAILY_WATER_VALUE / (total_minutes / interval))
 
-        val unit = if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) "ml" else "fl oz"
+        val unit = if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) "ml" else "fl oz"
 
         binding.lblMessage.text = sh!!.get_string(R.string.str_goal_consume).replace("$1", "$consume $unit")
             .replace("$2", "" + URLFactory.DAILY_WATER_VALUE + " " + unit)
 
-        ph!!.savePreferences(
+        spm!!.savePreferences(
             URLFactory.WAKE_UP_TIME,
             binding.txtWakeupTime.getText().toString().trim { it <= ' ' })
-        ph!!.savePreferences(URLFactory.WAKE_UP_TIME_HOUR, from_hour)
-        ph!!.savePreferences(URLFactory.WAKE_UP_TIME_MINUTE, from_minute)
+        spm!!.savePreferences(URLFactory.WAKE_UP_TIME_HOUR, from_hour)
+        spm!!.savePreferences(URLFactory.WAKE_UP_TIME_MINUTE, from_minute)
 
-        ph!!.savePreferences(
+        spm!!.savePreferences(
             URLFactory.BED_TIME,binding.txtBedTime.getText().toString().trim { it <= ' ' })
-        ph!!.savePreferences(URLFactory.BED_TIME_HOUR, to_hour)
-        ph!!.savePreferences(URLFactory.BED_TIME_MINUTE, to_minute)
+        spm!!.savePreferences(URLFactory.BED_TIME_HOUR, to_hour)
+        spm!!.savePreferences(URLFactory.BED_TIME_MINUTE, to_minute)
 
-        ph!!.savePreferences(URLFactory.INTERVAL, interval)
+        spm!!.savePreferences(URLFactory.INTERVAL, interval)
 
-        if (consume > URLFactory.DAILY_WATER_VALUE) ph!!.savePreferences(
+        if (consume > URLFactory.DAILY_WATER_VALUE) spm!!.savePreferences(
             URLFactory.IGNORE_NEXT_STEP,
             true
         )
-        else if (consume == 0) ph!!.savePreferences(URLFactory.IGNORE_NEXT_STEP, true)
-        else ph!!.savePreferences(URLFactory.IGNORE_NEXT_STEP, false)
+        else if (consume == 0) spm!!.savePreferences(URLFactory.IGNORE_NEXT_STEP, true)
+        else spm!!.savePreferences(URLFactory.IGNORE_NEXT_STEP, false)
 
     }
 

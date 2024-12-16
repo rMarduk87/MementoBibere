@@ -27,7 +27,7 @@ object MyAlarmManager {
             context,
             _id,
             intentAlarm,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
 
         d("MAINALARMID A :", _id.toString() + " @@@ " + updateTime.timeInMillis)

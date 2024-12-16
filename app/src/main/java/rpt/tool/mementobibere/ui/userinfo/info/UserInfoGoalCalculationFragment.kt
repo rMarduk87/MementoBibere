@@ -40,13 +40,13 @@ class UserInfoGoalCalculationFragment :
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
-            if (ph!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) {
+            if (spm!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) {
 
-                URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE)
-                ph!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
+                URLFactory.DAILY_WATER_VALUE = spm!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE)
+                spm!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
                 binding.lblGoal.text = getData("" + URLFactory.DAILY_WATER_VALUE)
 
-                if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+                if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
                     binding.lblUnit.text = "ml"
                 } else {
                     binding.lblUnit.text = "fl oz"
@@ -61,13 +61,13 @@ class UserInfoGoalCalculationFragment :
 
     @SuppressLint("SetTextI18n")
     private fun body() {
-        if (ph!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) {
-            URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE)
-            ph!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
+        if (spm!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) {
+            URLFactory.DAILY_WATER_VALUE = spm!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE)
+            spm!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
 
             binding.lblGoal.text = getData("" + URLFactory.DAILY_WATER_VALUE)
 
-            if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+            if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
                 binding.lblUnit.text = "ml"
             } else {
                 binding.lblUnit.text = "fl oz"
@@ -80,18 +80,18 @@ class UserInfoGoalCalculationFragment :
     }
 
     private fun calculate_goal() {
-        val tmp_weight = "" + ph!!.getString(URLFactory.PERSON_WEIGHT)
+        val tmp_weight = "" + spm!!.getString(URLFactory.PERSON_WEIGHT)
 
-        val isFemale: Boolean = ph!!.getBoolean(URLFactory.USER_GENDER)
-        val isActive: Boolean = ph!!.getBoolean(URLFactory.IS_ACTIVE)
-        val isPregnant: Boolean = ph!!.getBoolean(URLFactory.IS_PREGNANT)
-        val isBreastfeeding: Boolean = ph!!.getBoolean(URLFactory.IS_BREATFEEDING)
-        val weatherIdx: Int = ph!!.getInt(URLFactory.WEATHER_CONSITIONS)
+        val isFemale: Boolean = spm!!.getBoolean(URLFactory.USER_GENDER)
+        val isActive: Boolean = spm!!.getBoolean(URLFactory.IS_ACTIVE)
+        val isPregnant: Boolean = spm!!.getBoolean(URLFactory.IS_PREGNANT)
+        val isBreastfeeding: Boolean = spm!!.getBoolean(URLFactory.IS_BREATFEEDING)
+        val weatherIdx: Int = spm!!.getInt(URLFactory.WEATHER_CONSITIONS)
 
         if (!sh!!.check_blank_data(tmp_weight)) {
             var tot_drink = 0.0
             var tmp_kg = 0.0
-            tmp_kg = if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+            tmp_kg = if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
                 ("" + tmp_weight).toDouble()
             } else {
                 HeightWeightHelper.lbToKgConverter(tmp_weight.toDouble())
@@ -123,7 +123,7 @@ class UserInfoGoalCalculationFragment :
 
             val tot_drink_fl_oz: Double = HeightWeightHelper.mlToOzConverter(tot_drink)
 
-            if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+            if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
                 binding.lblUnit.text = "ml"
                 URLFactory.DAILY_WATER_VALUE = tot_drink.toFloat()
             } else {
@@ -134,7 +134,7 @@ class UserInfoGoalCalculationFragment :
             URLFactory.DAILY_WATER_VALUE = Math.round(URLFactory.DAILY_WATER_VALUE).toFloat()
             binding.lblGoal.text = getData("" + URLFactory.DAILY_WATER_VALUE)
 
-            ph!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
+            spm!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
         }
     }
 
@@ -160,18 +160,18 @@ class UserInfoGoalCalculationFragment :
         val btn_save = view.findViewById<RelativeLayout>(R.id.btn_save)
         val seekbarGoal: SeekBar = view.findViewById<SeekBar>(R.id.seekbarGoal)
 
-        if (ph!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) lbl_goal2.setText(
+        if (spm!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) lbl_goal2.setText(
             getData(
-                "" + ph!!.getFloat(
+                "" + spm!!.getFloat(
                     URLFactory.SET_MANUALLY_GOAL_VALUE
                 ) as Int
             )
         )
-        else lbl_goal2.setText(getData("" + ph!!.getFloat(URLFactory.DAILY_WATER) as Int))
+        else lbl_goal2.setText(getData("" + spm!!.getFloat(URLFactory.DAILY_WATER) as Int))
 
-        lbl_unit2.text = if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) "ml" else "fl oz"
+        lbl_unit2.text = if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) "ml" else "fl oz"
 
-        if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+        if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 seekbarGoal.min = 900
             }
@@ -192,7 +192,7 @@ class UserInfoGoalCalculationFragment :
         }
 
         val f =
-            if (ph!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) ph!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE) else ph!!.getFloat(
+            if (spm!!.getBoolean(URLFactory.SET_MANUALLY_GOAL)) spm!!.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE) else spm!!.getFloat(
                 URLFactory.DAILY_WATER
             )
         seekbarGoal.progress = f.toInt()
@@ -225,7 +225,7 @@ class UserInfoGoalCalculationFragment :
                 var progress = progress
                 if (isExecuteSeekbar) {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                        progress = if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+                        progress = if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
                             if (progress < 900) 900 else progress
                         } else {
                             if (progress < 30) 30 else progress
@@ -250,28 +250,28 @@ class UserInfoGoalCalculationFragment :
         btn_cancel.setOnClickListener { dialog.dismiss() }
 
         btn_save.setOnClickListener {
-            if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT) && lbl_goal2.getText().toString()
+            if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT) && lbl_goal2.getText().toString()
                     .trim { it <= ' ' }
                     .toFloat() >= 900
             ) {
                 URLFactory.DAILY_WATER_VALUE =
                     lbl_goal2.getText().toString().trim { it <= ' ' }.toFloat()
-                ph!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
+                spm!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
                 binding.lblGoal.text = getData("" + URLFactory.DAILY_WATER_VALUE)
-                ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, true)
-                ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL_VALUE, URLFactory.DAILY_WATER_VALUE)
+                spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, true)
+                spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL_VALUE, URLFactory.DAILY_WATER_VALUE)
                 dialog.dismiss()
             } else {
-                if (!ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT) && lbl_goal2.getText().toString()
+                if (!spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT) && lbl_goal2.getText().toString()
                         .trim { it <= ' ' }
                         .toFloat() >= 30
                 ) {
                     URLFactory.DAILY_WATER_VALUE = lbl_goal2.getText().toString().trim { it <= ' ' }
                         .toFloat()
-                    ph!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
+                    spm!!.savePreferences(URLFactory.DAILY_WATER, URLFactory.DAILY_WATER_VALUE)
                     binding.lblGoal.text = getData("" + URLFactory.DAILY_WATER_VALUE)
-                    ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, true)
-                    ph!!.savePreferences(
+                    spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, true)
+                    spm!!.savePreferences(
                         URLFactory.SET_MANUALLY_GOAL_VALUE,
                         URLFactory.DAILY_WATER_VALUE
                     )

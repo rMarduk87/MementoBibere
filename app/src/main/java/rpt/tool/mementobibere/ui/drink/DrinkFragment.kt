@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.appwidget.AppWidgetManager
-import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.DialogInterface.OnShowListener
@@ -12,11 +11,8 @@ import android.content.Intent
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.PowerManager
-import android.provider.Settings
 import android.text.InputFilter
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -30,7 +26,6 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,8 +33,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import rpt.tool.mementobibere.BuildConfig
-import rpt.tool.mementobibere.IOnBackPressed
 import rpt.tool.mementobibere.InitUserInfoActivity
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
@@ -55,6 +48,7 @@ import rpt.tool.mementobibere.utils.helpers.HeightWeightHelper.ozToMlConverter
 import rpt.tool.mementobibere.utils.log.d
 import rpt.tool.mementobibere.utils.log.e
 import rpt.tool.mementobibere.utils.log.v
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.navigation.safeNavController
 import rpt.tool.mementobibere.utils.navigation.safeNavigate
 import rpt.tool.mementobibere.utils.view.adapters.ContainerAdapterNew
@@ -101,31 +95,40 @@ class DrinkFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!ph!!.getBoolean(URLFactory.HIDE_WELCOME_SCREEN)) {
+        if (!SharedPreferencesManager.hideWelcomeScreen) {
             startActivity(Intent(requireContext(), InitUserInfoActivity::class.java))
             requireActivity().finish()
         }
 
-        if (ph!!.getFloat(URLFactory.DAILY_WATER) == 0f) {
-            URLFactory.DAILY_WATER_VALUE = 2500f
-        } else {
-            URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.DAILY_WATER)
+        if(!SharedPreferencesManager.setGender || !SharedPreferencesManager.setUserName
+            || !SharedPreferencesManager.setBloodDonor ||
+            !SharedPreferencesManager.setWorkOut ||
+            !SharedPreferencesManager.setClimate ||
+            !SharedPreferencesManager.setHeight || !SharedPreferencesManager.setWeight){
+            startActivity(Intent(requireContext(), InitUserInfoActivity::class.java))
+            requireActivity().finish()
         }
 
-        if (sh!!.check_blank_data("" + ph!!.getString(URLFactory.WATER_UNIT))) {
+        if (SharedPreferencesManager.dailyWater == 0f) {
+            URLFactory.DAILY_WATER_VALUE = 2500f
+        } else {
+            URLFactory.DAILY_WATER_VALUE = SharedPreferencesManager.dailyWater
+        }
+
+        if (sh!!.check_blank_data("" + SharedPreferencesManager.waterUnit)) {
             URLFactory.WATER_UNIT_VALUE = "ml"
         } else {
-            URLFactory.WATER_UNIT_VALUE = ph!!.getString(URLFactory.WATER_UNIT)!!
+            URLFactory.WATER_UNIT_VALUE = SharedPreferencesManager.waterUnit!!
         }
 
         dateNow = AppUtils.getCurrentOnlyDate()!!
 
-        if(ph!!.getBoolean(URLFactory.BLOOD_DONOR) && !dh!!.IS_EXISTS(
+        if(SharedPreferencesManager.bloodDonorKey && !dh!!.IS_EXISTS(
                     "tbl_blood_donor",
                     "BloodDonorDate='$dateNow'"
                 )){
             binding.avisLayout.visibility = VISIBLE
-        }else if(ph!!.getBoolean(URLFactory.BLOOD_DONOR) && dh!!.IS_EXISTS(
+        }else if(SharedPreferencesManager.bloodDonorKey && dh!!.IS_EXISTS(
                 "tbl_blood_donor",
                 "Date='$dateNow'"
             )){
@@ -142,34 +145,6 @@ class DrinkFragment :
             Uri.parse(("android.resource://" + requireContext().packageName) + "/" + R.raw.fill_water_sound)
         )
 
-        try {
-            val pm: PowerManager? = getSystemService(requireContext(), PowerManager::class.java)
-            val packageName: String = requireContext().packageName
-
-            if (!pm!!.isIgnoringBatteryOptimizations(packageName)) {
-                if (Build.MANUFACTURER.equals("OnePlus", ignoreCase = true)) {
-                    showPermissionDialog()
-                } else {
-                    val intent =
-                        Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    intent.setData(Uri.parse("package:$packageName"))
-                    startActivity(intent)
-                }
-            }
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-            e.message?.let { e(Throwable(e), it) }
-        }
-
-        try {
-            val intent = Intent("com.meizu.safe.security.SHOW_APPSEC")
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            intent.putExtra("packageName", BuildConfig.APPLICATION_ID)
-            startActivity(intent)
-        } catch (e: Exception) {
-            e.message?.let { e(Throwable(e), it) }
-        }
-
         frame()
 
     }
@@ -184,14 +159,6 @@ class DrinkFragment :
             )){
             binding.lblTotalGoal.setTextColor(resources.getColor(R.color.red))
             binding.lblTotalDrunk.setTextColor(resources.getColor(R.color.red))
-        }
-
-        if(!ph!!.getBoolean(URLFactory.SET_USER_GENDER) || !ph!!.getBoolean(URLFactory.SET_USER_NAME)
-            || !ph!!.getBoolean(URLFactory.SET_BLOOD_DONOR) ||
-            !ph!!.getBoolean(URLFactory.SET_WORK_OUT) ||
-            !ph!!.getBoolean(URLFactory.SET_CLIMATE) ||
-            !ph!!.getBoolean(URLFactory.SET_HEIGHT) || !ph!!.getBoolean(URLFactory.SET_WEIGHT)){
-            setNewUserData()
         }
 
         binding.imgCalendar.setOnClickListener{
@@ -218,15 +185,11 @@ class DrinkFragment :
                     initialValues.put("BloodDonorDate", "" + avis)
                     dh!!.INSERT("tbl_blood_donor", initialValues)
                     if (sdf.format(calendar.time) == dateNow) {
-                        if (ph!!.getFloat(URLFactory.DAILY_WATER) < 2000f) {
-                            ph!!.savePreferences(URLFactory.DAILY_WATER, 2000f)
+                        if (SharedPreferencesManager.dailyWater < 2000f) {
+                            SharedPreferencesManager.dailyWater = 2000f
                             URLFactory.DAILY_WATER_VALUE = 2000f
                         }
                     }
-                    safeNavController?.safeNavigate(
-                        DrinkFragmentDirections
-                            .actionDrinkFragmentToSelfFragment()
-                    )
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -250,19 +213,6 @@ class DrinkFragment :
         } else {
             URLFactory.RELOAD_DASHBOARD = true
         }
-    }
-
-    private fun showPermissionDialog() {
-        safeNavController?.safeNavigate(
-            DrinkFragmentDirections.actionDrinkFragmentToBatteryOptimizationDialogFragment()
-        )
-    }
-
-    private fun setNewUserData() {
-
-        safeNavController?.safeNavigate(
-            DrinkFragmentDirections.actionDrinkFragmentToNewUserDataDialogFragment()
-        )
     }
 
     private fun frame(){
@@ -304,7 +254,7 @@ class DrinkFragment :
             setCustomDate(dth!!.getDate(filter_cal!!.timeInMillis, URLFactory.DATE_FORMAT))
         }
 
-        binding.lblUserName.text = ph!!.getString(URLFactory.USER_NAME)
+        binding.lblUserName.text = SharedPreferencesManager.userName
     }
 
     @SuppressLint("RtlHardcoded")
@@ -312,7 +262,7 @@ class DrinkFragment :
         loadPhoto()
 
         binding.include1.lblToolbarTitle.text = sh!!.get_string(R.string.str_today)
-        binding.lblUserName.text = ph!!.getString(URLFactory.USER_NAME)
+        binding.lblUserName.text = SharedPreferencesManager.userName
 
         menu_name.clear()
         menu_name.add(Menu(sh!!.get_string(R.string.str_home), true))
@@ -460,9 +410,9 @@ class DrinkFragment :
     }
 
     private fun loadPhoto() {
-        if (sh!!.check_blank_data(ph!!.getString(URLFactory.USER_PHOTO))) {
+        if (sh!!.check_blank_data(SharedPreferencesManager.userPhoto)) {
             Glide.with(requireActivity()).load(
-                if (ph!!.getBoolean(URLFactory.USER_GENDER))
+                if (SharedPreferencesManager.userGender)
                     R.drawable.female_white
                 else
                     R.drawable.male_white
@@ -472,19 +422,19 @@ class DrinkFragment :
             var ex = false
 
             try {
-                val f = File(ph!!.getString(URLFactory.USER_PHOTO)!!)
+                val f = File(SharedPreferencesManager.userPhoto)
                 if (f.exists()) ex = true
             } catch (e: java.lang.Exception) {
                 e.message?.let { it1 -> e(Throwable(e), it1) }
             }
 
             if (ex) {
-                Glide.with(requireActivity()).load(ph!!.getString(URLFactory.USER_PHOTO))
+                Glide.with(requireActivity()).load(SharedPreferencesManager.userPhoto)
                     .apply(RequestOptions.circleCropTransform())
                     .into(binding.imgUser)
             } else {
                 Glide.with(requireActivity()).load(
-                    if (ph!!.getBoolean(URLFactory.USER_GENDER))
+                    if (SharedPreferencesManager.userGender)
                         R.drawable.female_white
                     else
                         R.drawable.male_white
@@ -556,9 +506,9 @@ class DrinkFragment :
                 dth!!.getCurrentDate(URLFactory.DATE_FORMAT),
                 ignoreCase = true
             )
-        ) URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.DAILY_WATER)
+        ) URLFactory.DAILY_WATER_VALUE = SharedPreferencesManager.dailyWater
         else if (total_drink > 0) URLFactory.DAILY_WATER_VALUE = ("" + total_drink).toFloat()
-        else URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.DAILY_WATER)
+        else URLFactory.DAILY_WATER_VALUE = SharedPreferencesManager.dailyWater
 
         binding.lblTotalDrunk.text = AppUtils.getData("" + (drink_water).toInt() + " " + URLFactory.WATER_UNIT_VALUE)
         binding.lblTotalGoal.text = AppUtils.getData("" + (URLFactory.DAILY_WATER_VALUE).toInt() + " " + URLFactory.WATER_UNIT_VALUE)
@@ -720,7 +670,7 @@ class DrinkFragment :
 
         load_all_container()
 
-        val unit = ph!!.getString(URLFactory.WATER_UNIT)
+        val unit = SharedPreferencesManager.waterUnit
 
         if (unit.equals("ml", ignoreCase = true)) {
             binding.containerName.text = "${containerArrayList[selected_pos].containerValue} $unit"
@@ -747,10 +697,7 @@ class DrinkFragment :
 
                     selected_pos = position
 
-                    ph!!.savePreferences(
-                        URLFactory.SELECTED_CONTAINER,
-                        container!!.containerId!!.toInt()
-                    )
+                    SharedPreferencesManager.selectedContainer = container!!.containerId!!.toInt()
 
                     for (k in containerArrayList.indices) {
                         containerArrayList[k].isSelected(false)
@@ -760,7 +707,7 @@ class DrinkFragment :
 
                     adapter!!.notifyDataSetChanged()
 
-                    val unit = ph!!.getString(URLFactory.WATER_UNIT)
+                    val unit = SharedPreferencesManager.waterUnit
 
                     if (unit.equals("ml", ignoreCase = true)) {
                         binding.containerName.text = "${container.containerValue} $unit"
@@ -810,7 +757,7 @@ class DrinkFragment :
         refresh_bottle(true, isRegularAnimation)
     }
 
-    fun openChangeContainerPicker() {
+    private fun openChangeContainerPicker() {
         bottomSheetDialog = BottomSheetDialog(requireActivity())
         
         bottomSheetDialog!!.setOnShowListener(OnShowListener { dialog ->
@@ -922,7 +869,7 @@ class DrinkFragment :
 
                 load_all_container()
 
-                ph!!.savePreferences(URLFactory.SELECTED_CONTAINER, nextContainerID)
+                SharedPreferencesManager.selectedContainer = nextContainerID
 
                 var tmp_pos = -1
 
@@ -938,7 +885,7 @@ class DrinkFragment :
                 }
 
 
-                val unit = ph!!.getString(URLFactory.WATER_UNIT)
+                val unit = SharedPreferencesManager.waterUnit
 
                 if (tmp_pos >= 0) {
                     selected_pos = tmp_pos
@@ -1042,7 +989,7 @@ class DrinkFragment :
         }
 
 
-        if (!ph!!.getBoolean(URLFactory.DISABLE_SOUND_WHEN_ADD_WATER)) {
+        if (!SharedPreferencesManager.disableSoundWhenAddWater) {
             ringtone!!.stop()
             ringtone!!.play()
         }
@@ -1109,8 +1056,8 @@ class DrinkFragment :
 
         var selected_container_id = "1"
 
-        selected_container_id = if (ph!!.getInt(URLFactory.SELECTED_CONTAINER) == 0) "1"
-        else "" + ph!!.getInt(URLFactory.SELECTED_CONTAINER)
+        selected_container_id = if (SharedPreferencesManager.selectedContainer == 0) "1"
+        else "" + SharedPreferencesManager.selectedContainer
 
         for (k in arr_container.indices) {
             val container = Container()
@@ -1182,7 +1129,7 @@ class DrinkFragment :
 
         for (k in arr_data.indices) {
             if (arr_data[k]["AlarmType"].equals("R", ignoreCase = true)) {
-                if (!ph!!.getBoolean(URLFactory.IS_MANUAL_REMINDER)) {
+                if (!SharedPreferencesManager.isManualReminder) {
                     val arr_data2 =
                         dh!!.getdata("tbl_alarm_sub_details",
                             "SuperId='" + arr_data[k]["id"] + "'")
@@ -1196,7 +1143,7 @@ class DrinkFragment :
                     }
                 }
             } else {
-                if (ph!!.getBoolean(URLFactory.IS_MANUAL_REMINDER)) {
+                if (SharedPreferencesManager.isManualReminder) {
                     if (arr_data[k]["IsOff"].equals("0", ignoreCase = true)) {
                         reminder_data.add(
                             NextReminderModel(
@@ -1257,6 +1204,4 @@ class DrinkFragment :
         handlerReminder = Handler()
         handlerReminder!!.postDelayed(runnableReminder!!, 1000)
     }
-
-
 }

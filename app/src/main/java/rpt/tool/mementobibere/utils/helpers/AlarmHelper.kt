@@ -1,24 +1,26 @@
 package rpt.tool.mementobibere.utils.helpers
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
-import android.util.Log
+import androidx.core.database.getStringOrNull
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Date_Helper
-import rpt.tool.mementobibere.basic.appbasiclibs.utils.Preferences_Helper
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.data.backuprestore.AlarmDetails
 import rpt.tool.mementobibere.utils.data.backuprestore.AlarmSubDetails
 import rpt.tool.mementobibere.utils.data.backuprestore.BackupRestore
 import rpt.tool.mementobibere.utils.extensions.equalsIgnoreCase
+import rpt.tool.mementobibere.utils.log.d
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.receiver.MyAlarmManager
 import java.util.Calendar
 import java.util.Locale
 
+@Suppress("DEPRECATED_IDENTITY_EQUALS")
 internal class AlarmHelper
     (private val mContext: Context) {
     var dth: Date_Helper = Date_Helper()
-    var ph: Preferences_Helper = Preferences_Helper(mContext)
     var alarmDetailsList: MutableList<AlarmDetails> = ArrayList<AlarmDetails>()
 
 
@@ -38,7 +40,7 @@ internal class AlarmHelper
     fun setAlarm() {
         val backupRestore: BackupRestore = BackupRestore()
         backupRestore.alarmDetails = alarmDetailsList
-        backupRestore.isManualReminderActive(ph.getBoolean(URLFactory.IS_MANUAL_REMINDER))
+        backupRestore.isManualReminderActive(SharedPreferencesManager.isManualReminder)
 
         for (k in alarmDetailsList.indices) {
             if (backupRestore.alarmDetails[k].alarmType!!.equalsIgnoreCase("M")
@@ -129,8 +131,8 @@ internal class AlarmHelper
         }
     }
 
-    fun loadData() {
-        val arr_data = getdata("tbl_alarm_details")
+    private fun loadData() {
+        val arr_data = getData("tbl_alarm_details")
 
         alarmDetailsList.clear()
 
@@ -161,9 +163,9 @@ internal class AlarmHelper
 
             val alarmSubDetailsList: MutableList<AlarmSubDetails> = ArrayList<AlarmSubDetails>()
 
-            val arr_data2 = getdata("tbl_alarm_sub_details", "SuperId=" + arr_data[k]["id"])
+            val arr_data2 = getData("tbl_alarm_sub_details", "SuperId=" + arr_data[k]["id"])
 
-            Log.d("arr_data2 : ", "" + arr_data2.size)
+            d("arr_data2 : ", "" + arr_data2.size)
 
             for (j in arr_data2.indices) {
                 val alarmSubDetails: AlarmSubDetails = AlarmSubDetails()
@@ -181,28 +183,49 @@ internal class AlarmHelper
     }
 
 
-    fun getdata(table_name: String): ArrayList<HashMap<String, String>> {
+    @SuppressLint("Recycle")
+    fun getData(table_name: String): ArrayList<HashMap<String, String>> {
         val maplist = ArrayList<HashMap<String, String>>()
 
         val query = "SELECT * FROM $table_name"
 
-        val c: Cursor = Constant.SDB!!.rawQuery(query, null)
+        val exsist = checkTableExistanse(table_name)
 
-        if (c.moveToFirst()) {
-            do {
-                val map = HashMap<String, String>()
-                for (i in 0 until c.columnCount) {
-                    map[c.getColumnName(i)] = c.getString(i)
-                }
+        if(exsist){
+            val c: Cursor = Constant.SDB!!.rawQuery(query, null)
 
-                maplist.add(map)
-            } while (c.moveToNext())
+            if (c.moveToFirst()) {
+                do {
+                    val map = HashMap<String, String>()
+                    for (i in 0 until c.columnCount) {
+                        if(c.getStringOrNull(i) != null){
+                            map[c.getColumnName(i)] = c.getString(i)
+                        }
+                    }
+
+                    maplist.add(map)
+                } while (c.moveToNext())
+            }
         }
 
         return maplist
     }
 
-    fun getdata(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
+    private fun checkTableExistanse(tableName: String): Boolean {
+        val query =
+            ("select DISTINCT tbl_name from sqlite_master where tbl_name = '$tableName").toString() + "'"
+        Constant.SDB!!.rawQuery(query, null).use { cursor ->
+            if (cursor != null) {
+                if (cursor.count > 0) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
+    @SuppressLint("Recycle")
+    fun getData(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
         val maplist = ArrayList<HashMap<String, String>>()
 
         var query = "SELECT * FROM $table_name"
@@ -217,7 +240,9 @@ internal class AlarmHelper
             do {
                 val map = HashMap<String, String>()
                 for (i in 0 until c.columnCount) {
-                    map[c.getColumnName(i)] = c.getString(i)
+                    if(c.getStringOrNull(i) != null){
+                        map[c.getColumnName(i)] = c.getString(i)
+                    }
                 }
 
                 maplist.add(map)

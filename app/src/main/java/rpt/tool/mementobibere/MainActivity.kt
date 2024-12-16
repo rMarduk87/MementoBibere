@@ -1,12 +1,10 @@
 package rpt.tool.mementobibere
 
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -22,7 +20,6 @@ import com.lorenzofelletti.permissions.dispatcher.dsl.doOnGranted
 import com.lorenzofelletti.permissions.dispatcher.dsl.withRequestCode
 import rpt.tool.mementobibere.basic.appbasiclibs.BaseAppCompatActivity
 import rpt.tool.mementobibere.databinding.ActivityMainBinding
-import rpt.tool.mementobibere.migration.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.extensions.toData
 import rpt.tool.mementobibere.utils.extensions.toMigration
@@ -31,8 +28,10 @@ import rpt.tool.mementobibere.utils.extensions.toStringDate
 import rpt.tool.mementobibere.utils.extensions.toStringHour
 import rpt.tool.mementobibere.utils.extensions.toStringMinute
 import rpt.tool.mementobibere.migration.utils.helpers.SqliteHelper
+import rpt.tool.mementobibere.migration.utils.managers.OldSharedPreferencesManager
 import rpt.tool.mementobibere.utils.log.d
 import rpt.tool.mementobibere.utils.log.w
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 
 
 class MainActivity : BaseAppCompatActivity() {
@@ -127,7 +126,7 @@ class MainActivity : BaseAppCompatActivity() {
     }
 
 
-    fun initPermissions() {
+    private fun initPermissions() {
         pm.buildRequestResultsDispatcher {
             withRequestCode(1) {
                 checkPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -144,100 +143,79 @@ class MainActivity : BaseAppCompatActivity() {
     }
 
     private fun initConversion() {
-        if(!ph!!.getBoolean(URLFactory.MIGRATION)){
+        if(!SharedPreferencesManager.migration){
             sqliteHelper = SqliteHelper(this,this)
-            sqliteHelper.start(ph!!.getBoolean(URLFactory.MIGRATION))
-            covertSharedPref()
+            val convert = SharedPreferencesManager.migration
+            if(convert){
+                covertSharedPref()
+            }
+            else{
+                SharedPreferencesManager.migration = true
+            }
+
         }
 
     }
 
     private fun covertSharedPref() {
-        var bloodDonorKey = SharedPreferencesManager.bloodDonorKey==1
-        var setBloodDonor = SharedPreferencesManager.setBloodDonor
-        var totalIntake = SharedPreferencesManager.totalIntake
-        var waterUnit = SharedPreferencesManager.unitString
-        var hideWelcome = SharedPreferencesManager.firstRun
-        var setGender = SharedPreferencesManager.setGender
-        var gender = SharedPreferencesManager.gender==1
-        var setWorkOut = SharedPreferencesManager.setWorkOut
-        var workOut = SharedPreferencesManager.workType==3
-        var setClimate = SharedPreferencesManager.setClimate
-        var climate = SharedPreferencesManager.climate
-        var setWeight = SharedPreferencesManager.setWeight
-        var weight = SharedPreferencesManager.weight.toString()
-        var weightUnit = SharedPreferencesManager.weightUnit == 0
-        var notificationStatus = SharedPreferencesManager.notificationStatus
-        var interval = SharedPreferencesManager.notificationFreq
-        var sleeping = SharedPreferencesManager.sleepingTime
-        var wake = SharedPreferencesManager.wakeUpTime
+        val bloodDonorKey = OldSharedPreferencesManager.bloodDonorKey==1
+        val setBloodDonor = OldSharedPreferencesManager.setBloodDonor
+        val totalIntake = OldSharedPreferencesManager.totalIntake
+        val waterUnit = OldSharedPreferencesManager.unitString
+        val hideWelcome = OldSharedPreferencesManager.firstRun
+        val setGender = OldSharedPreferencesManager.setGender
+        val gender = OldSharedPreferencesManager.gender==1
+        val setWorkOut = OldSharedPreferencesManager.setWorkOut
+        val workOut = OldSharedPreferencesManager.workType==3
+        val setClimate = OldSharedPreferencesManager.setClimate
+        val climate = OldSharedPreferencesManager.climate
+        val setWeight = OldSharedPreferencesManager.setWeight
+        var weight = OldSharedPreferencesManager.weight.toString()
+        val weightUnit = OldSharedPreferencesManager.weightUnit == 0
+        val notificationStatus = OldSharedPreferencesManager.notificationStatus
+        val interval = OldSharedPreferencesManager.notificationFreq
+        val sleeping = OldSharedPreferencesManager.sleepingTime
+        val wake = OldSharedPreferencesManager.wakeUpTime
 
         if(weight == "0"){
             weight = if(weightUnit) "80" else "176"
         }
 
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
-
-        ph!!.savePreferences(
-            URLFactory.BLOOD_DONOR,bloodDonorKey)
-
-        ph!!.savePreferences(
-            URLFactory.SET_BLOOD_DONOR,setBloodDonor)
-
-        ph!!.savePreferences(URLFactory.DAILY_WATER,totalIntake)
-        ph!!.savePreferences(URLFactory.WATER_UNIT,waterUnit.toReal())
+        SharedPreferencesManager.setManuallyGoal = false
+        SharedPreferencesManager.bloodDonorKey = bloodDonorKey
+        SharedPreferencesManager.setBloodDonor = setBloodDonor
+        SharedPreferencesManager.dailyWater = totalIntake
+        SharedPreferencesManager.waterUnit = waterUnit.toReal()
         URLFactory.DAILY_WATER_VALUE = totalIntake
         URLFactory.WATER_UNIT_VALUE = waterUnit.toReal()
-        ph!!.savePreferences(URLFactory.HIDE_WELCOME_SCREEN,hideWelcome)
-        ph!!.savePreferences(
-            URLFactory.USER_GENDER,gender)
+        SharedPreferencesManager.hideWelcomeScreen = hideWelcome
+        SharedPreferencesManager.userGender = gender
+        SharedPreferencesManager.setGender = setGender
+        SharedPreferencesManager.isActive = workOut
+        SharedPreferencesManager.setWorkOut = setWorkOut
+        SharedPreferencesManager.climate = climate.toMigration()
+        SharedPreferencesManager.setClimate = setClimate
+        SharedPreferencesManager.personWeight = weight
+        SharedPreferencesManager.setWeight = setWeight
+        SharedPreferencesManager.weightUnit = weightUnit
+        SharedPreferencesManager.disableNotification = notificationStatus
+        SharedPreferencesManager.notificationFreq = interval
 
-        ph!!.savePreferences(
-            URLFactory.SET_USER_GENDER,setGender)
+        val wakeUp = wake.toData()
+        val bed = sleeping.toData()
 
-        ph!!.savePreferences(
-            URLFactory.IS_ACTIVE,workOut)
-
-        ph!!.savePreferences(
-            URLFactory.SET_WORK_OUT,setWorkOut)
-
-        ph!!.savePreferences(
-            URLFactory.WEATHER_CONSITIONS,climate.toMigration())
-
-        ph!!.savePreferences(
-            URLFactory.SET_CLIMATE,setClimate)
-
-        ph!!.savePreferences(
-            URLFactory.PERSON_WEIGHT,weight)
-
-        ph!!.savePreferences(
-            URLFactory.SET_WEIGHT,setWeight)
-
-        ph!!.savePreferences(
-            URLFactory.PERSON_WEIGHT_UNIT,weightUnit)
-
-        ph!!.savePreferences(
-            URLFactory.DISABLE_NOTIFICATION,notificationStatus)
-
-        ph!!.savePreferences(
-            URLFactory.INTERVAL,interval)
-
-        var wakeUp = wake.toData()
-        var bed = sleeping.toData()
-
-
-        ph!!.savePreferences(URLFactory.WAKE_UP_TIME,wakeUp.toStringDate())
-        ph!!.savePreferences(URLFactory.BED_TIME,bed.toStringDate())
-        ph!!.savePreferences(URLFactory.WAKE_UP_TIME_HOUR, wakeUp.toStringHour())
-        ph!!.savePreferences(URLFactory.WAKE_UP_TIME_MINUTE, wakeUp.toStringMinute())
-        ph!!.savePreferences(URLFactory.BED_TIME_HOUR, bed.toStringHour())
-        ph!!.savePreferences(URLFactory.BED_TIME_MINUTE, bed.toStringMinute())
+        SharedPreferencesManager.wakeUpTime = wakeUp.toStringDate()
+        SharedPreferencesManager.sleepingTime = bed.toStringDate()
+        SharedPreferencesManager.wakeUpTimeHour = wakeUp.toStringHour().toInt()
+        SharedPreferencesManager.wakeUpTimeMinute = wakeUp.toStringMinute().toInt()
+        SharedPreferencesManager.sleepTimeHour = bed.toStringHour().toInt()
+        SharedPreferencesManager.sleepTimeMinute = bed.toStringMinute().toInt()
 
         val settings: SharedPreferences =
             this.getSharedPreferences("user_pref", MODE_PRIVATE)
         settings.edit().clear().apply()
 
-        ph!!.savePreferences(URLFactory.MIGRATION,true)
+        SharedPreferencesManager.migration = true
 
     }
 

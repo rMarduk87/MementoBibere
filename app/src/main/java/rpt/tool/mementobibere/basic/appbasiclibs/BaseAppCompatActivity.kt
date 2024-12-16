@@ -22,7 +22,6 @@ open class BaseAppCompatActivity : AppCompatActivity() {
     var dh: Database_Helper? = null
     var mah: Map_Helper? = null
     var sh: String_Helper? = null
-    var ph: Preferences_Helper? = null
     var zh: Zip_Helper? = null
     var ih: Intent_Helper? = null
     var dbh: DB_Helper? = null
@@ -44,10 +43,8 @@ open class BaseAppCompatActivity : AppCompatActivity() {
         ih = Intent_Helper(mContext!!, act!!)
         mah = Map_Helper()
         sh = String_Helper(mContext!!, act!!)
-        ph = Preferences_Helper(mContext!!, act)
         zh = Zip_Helper(mContext!!)
         dbh = DB_Helper(mContext!!, act!!)
-
         uf!!.permission_StrictMode()
     }
 

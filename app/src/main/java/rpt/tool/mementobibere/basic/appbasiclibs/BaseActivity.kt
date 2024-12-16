@@ -12,7 +12,6 @@ import rpt.tool.mementobibere.basic.appbasiclibs.utils.ExceptionHandler
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Intent_Helper
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Json_Helper
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Map_Helper
-import rpt.tool.mementobibere.basic.appbasiclibs.utils.Preferences_Helper
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.String_Helper
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Utility_Function
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Zip_Helper
@@ -31,7 +30,6 @@ open class BaseActivity : Activity() {
     var mah: Map_Helper? = null
     @JvmField
     var sh: String_Helper? = null
-    var ph: Preferences_Helper? = null
     var zh: Zip_Helper? = null
     var ih: Intent_Helper? = null
     var dbh: DB_Helper? = null
@@ -53,7 +51,6 @@ open class BaseActivity : Activity() {
         ih = Intent_Helper(mContext!!, act!!)
         mah = Map_Helper()
         sh = String_Helper(mContext!!, act!!)
-        ph = Preferences_Helper(mContext!!, act)
         zh = Zip_Helper(mContext!!)
 
         uf!!.permission_StrictMode()

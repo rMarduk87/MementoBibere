@@ -21,6 +21,8 @@ object URLFactory {
 
     var HIDE_WELCOME_SCREEN: String = "hide_welcome_screen"
 
+    var USERS_SHARED_PREF = "lets_hydrate_user_pref"
+
 
     //========
     var USER_NAME: String = "user_name"

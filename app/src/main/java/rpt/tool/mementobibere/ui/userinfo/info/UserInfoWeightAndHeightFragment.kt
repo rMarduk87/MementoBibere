@@ -4,12 +4,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.widget.CompoundButton
 import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.basic.picker.HorizontalPicker
 import rpt.tool.mementobibere.databinding.FragmentUserInfoWeightAndHeightBinding
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.custom.DigitsInputFilter
@@ -36,7 +33,7 @@ class UserInfoWeightAndHeightFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+        if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
             init_WeightLB()
             init_WeightKG()
             binding.pickerLB.visibility = View.GONE
@@ -46,7 +43,7 @@ class UserInfoWeightAndHeightFragment :
             binding.pickerKG.visibility = View.GONE
         }
 
-        if (ph!!.getBoolean(URLFactory.PERSON_HEIGHT_UNIT)) {
+        if (spm!!.getBoolean(URLFactory.PERSON_HEIGHT_UNIT)) {
             init_HeightFeet()
             init_HeightCM()
             binding.pickerFeet.visibility = View.GONE
@@ -602,7 +599,7 @@ class UserInfoWeightAndHeightFragment :
             saveWeightData()
         }
 
-        if (ph!!.getBoolean(URLFactory.PERSON_HEIGHT_UNIT)) {
+        if (spm!!.getBoolean(URLFactory.PERSON_HEIGHT_UNIT)) {
             binding.rdoCm.isChecked = true
             binding.rdoCm.isClickable = false
             binding.rdoFeet.isClickable = true
@@ -612,7 +609,7 @@ class UserInfoWeightAndHeightFragment :
             binding.rdoFeet.isClickable = false
         }
 
-        if (ph!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+        if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
             binding.rdoKg.isChecked = true
             binding.rdoKg.isClickable = false
             binding.rdoLb.isClickable = true
@@ -622,12 +619,12 @@ class UserInfoWeightAndHeightFragment :
             binding.rdoLb.isClickable = false
         }
 
-        if (!sh!!.check_blank_data(ph!!.getString(URLFactory.PERSON_HEIGHT))) {
+        if (!sh!!.check_blank_data(spm!!.getString(URLFactory.PERSON_HEIGHT))) {
             if (binding.rdoCm.isChecked) {
                 binding.txtHeight.filters =
                     arrayOf<InputFilter>(
                         DigitsInputFilter(3, 0, 240.0))
-                binding.txtHeight.setText(getData(ph!!.getString(URLFactory.PERSON_HEIGHT)!!))
+                binding.txtHeight.setText(getData(spm!!.getString(URLFactory.PERSON_HEIGHT)!!))
             } else {
                 binding.txtHeight.filters = arrayOf<InputFilter>(
                     InputFilterRange(
@@ -635,7 +632,7 @@ class UserInfoWeightAndHeightFragment :
                         height_feet_elements
                     )
                 )
-                binding.txtHeight.setText(getData(ph!!.getString(URLFactory.PERSON_HEIGHT)!!))
+                binding.txtHeight.setText(getData(spm!!.getString(URLFactory.PERSON_HEIGHT)!!))
             }
         } else {
             if (binding.rdoCm.isChecked) {
@@ -654,15 +651,15 @@ class UserInfoWeightAndHeightFragment :
             }
         }
 
-        if (!sh!!.check_blank_data(ph!!.getString(URLFactory.PERSON_WEIGHT))) {
+        if (!sh!!.check_blank_data(spm!!.getString(URLFactory.PERSON_WEIGHT))) {
             if (binding.rdoKg.isChecked) {
                 binding.txtWeight.filters = arrayOf<InputFilter>(InputFilterWeightRange(0.0, 130.0))
-                binding.txtWeight.setText(getData(ph!!.getString(URLFactory.PERSON_WEIGHT)!!))
+                binding.txtWeight.setText(getData(spm!!.getString(URLFactory.PERSON_WEIGHT)!!))
             } else {
                 binding.txtWeight.filters =
                     arrayOf<InputFilter>(
                         DigitsInputFilter(3, 0, 287.0))
-                binding.txtWeight.setText(getData(ph!!.getString(URLFactory.PERSON_WEIGHT)!!))
+                binding.txtWeight.setText(getData(spm!!.getString(URLFactory.PERSON_WEIGHT)!!))
             }
         } else {
             if (binding.rdoKg.isChecked) {
@@ -684,14 +681,14 @@ class UserInfoWeightAndHeightFragment :
                 .toString().trim { it <= ' ' } + " @@@ " + binding.txtWeight.getText()
                 .toString().trim { it <= ' ' })
 
-        ph!!.savePreferences(
+        spm!!.savePreferences(
             URLFactory.PERSON_HEIGHT,
             "" + binding.txtHeight.getText().toString().trim { it <= ' ' })
-        ph!!.savePreferences(URLFactory.PERSON_HEIGHT_UNIT, binding.rdoCm.isChecked)
+        spm!!.savePreferences(URLFactory.PERSON_HEIGHT_UNIT, binding.rdoCm.isChecked)
 
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
 
-        ph!!.savePreferences(URLFactory.SET_HEIGHT, true)
+        spm!!.savePreferences(URLFactory.SET_HEIGHT, true)
     }
 
     fun saveWeightData() {
@@ -700,15 +697,15 @@ class UserInfoWeightAndHeightFragment :
             "" + binding.rdoKg.isChecked +
                     " @@@ " + binding.txtWeight.getText().toString().trim { it <= ' ' })
 
-        ph!!.savePreferences(
+        spm!!.savePreferences(
             URLFactory.PERSON_WEIGHT,
             "" + binding.txtWeight.getText().toString().trim { it <= ' ' })
-        ph!!.savePreferences(URLFactory.PERSON_WEIGHT_UNIT, binding.rdoKg.isChecked)
+        spm!!.savePreferences(URLFactory.PERSON_WEIGHT_UNIT, binding.rdoKg.isChecked)
 
-        ph!!.savePreferences(URLFactory.WATER_UNIT, if (binding.rdoKg.isChecked) "ml" else "fl oz")
+        spm!!.savePreferences(URLFactory.WATER_UNIT, if (binding.rdoKg.isChecked) "ml" else "fl oz")
 
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
-        ph!!.savePreferences(URLFactory.SET_WEIGHT, true)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_WEIGHT, true)
     }
 
     private fun getData(str: String): String {

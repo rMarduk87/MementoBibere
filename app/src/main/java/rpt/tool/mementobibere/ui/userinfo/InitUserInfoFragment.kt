@@ -2,7 +2,6 @@ package rpt.tool.mementobibere.ui.userinfo
 
 import android.content.ContentValues
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
@@ -15,6 +14,7 @@ import rpt.tool.mementobibere.databinding.FragmentInitUserInfoBinding
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.log.d
 import rpt.tool.mementobibere.utils.log.e
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.receiver.MyAlarmManager.cancelRecurringAlarm
 import rpt.tool.mementobibere.utils.receiver.MyAlarmManager.scheduleAutoRecurringAlarm
 import rpt.tool.mementobibere.utils.view.adapters.UserInfoPagerAdapter
@@ -24,7 +24,7 @@ import java.util.Date
 import java.util.Locale
 
 
-@Suppress("DEPRECATION", "UNUSED_EXPRESSION")
+@Suppress("DEPRECATION", "UNUSED_EXPRESSION", "DEPRECATED_IDENTITY_EQUALS")
 class InitUserInfoFragment:
     BaseFragment<FragmentInitUserInfoBinding>(FragmentInitUserInfoBinding::inflate),
     IOnBackPressed {
@@ -90,51 +90,52 @@ class InitUserInfoFragment:
 
         binding.btnNext.setOnClickListener(View.OnClickListener {
             if (current_page_idx === 0) {
-                if (sh!!.check_blank_data(ph!!.getString(URLFactory.USER_NAME))) {
+                if (sh!!.check_blank_data(SharedPreferencesManager.userName)) {
                     ah!!.customAlert(sh!!.get_string(R.string.str_your_name_validation))
                     return@OnClickListener
                 }
 
-                if (ph!!.getString(URLFactory.USER_NAME)!!.length < 3) {
+                if (SharedPreferencesManager.userName.length < 3) {
                     ah!!.customAlert(sh!!.get_string(R.string.str_valid_name_validation))
                     return@OnClickListener
                 }
             }
             if (current_page_idx === 1) {
                 try {
-                    if (sh!!.check_blank_data(ph!!.getString(URLFactory.PERSON_HEIGHT))) {
+                    if (sh!!.check_blank_data(SharedPreferencesManager.personHeight)) {
                         ah!!.customAlert(sh!!.get_string(R.string.str_height_validation))
                         return@OnClickListener
                     }
 
-                    if (sh!!.check_blank_data(ph!!.getString(URLFactory.PERSON_WEIGHT))) {
+                    if (sh!!.check_blank_data(SharedPreferencesManager.personHeight)) {
                         ah!!.customAlert(sh!!.get_string(R.string.str_weight_validation))
                         return@OnClickListener
                     }
 
-                    val `val` = ("" + ph!!.getString(URLFactory.PERSON_HEIGHT)).toFloat()
+                    val `val` = ("" + SharedPreferencesManager.personHeight).toFloat()
                     if (`val` < 2) {
                         ah!!.customAlert(sh!!.get_string(R.string.str_height_validation))
                         return@OnClickListener
                     }
 
-                    val val2 = ("" + ph!!.getString(URLFactory.PERSON_WEIGHT)).toFloat()
+                    val val2 = ("" + SharedPreferencesManager.personHeight).toFloat()
                     if (val2 < 30) {
                         ah!!.customAlert(sh!!.get_string(R.string.str_weight_validation))
                         return@OnClickListener
                     }
                 } catch (e: Exception) {
+                    e.message?.let { it1 -> e(Throwable(e), it1) }
                 }
             }
 
             if (current_page_idx === 5) {
-                if (sh!!.check_blank_data(ph!!.getString(URLFactory.WAKE_UP_TIME)) || sh!!.check_blank_data(
-                        ph!!.getString(URLFactory.BED_TIME)
+                if (sh!!.check_blank_data(SharedPreferencesManager.wakeUpTime) || sh!!.check_blank_data(
+                        SharedPreferencesManager.sleepingTime
                     )
                 ) {
                     ah!!.customAlert(sh!!.get_string(R.string.str_from_to_invalid_validation))
                     return@OnClickListener
-                } else if (ph!!.getBoolean(URLFactory.IGNORE_NEXT_STEP)) {
+                } else if (SharedPreferencesManager.ignoreNextStep) {
                     ah!!.customAlert(sh!!.get_string(R.string.str_from_to_invalid_validation))
                     return@OnClickListener
                 }
@@ -154,8 +155,8 @@ class InitUserInfoFragment:
         var date1: Date? = null
         var date2: Date? = null
         try {
-            date1 = ph!!.getString(URLFactory.WAKE_UP_TIME)?.let { simpleDateFormat.parse(it) }
-            date2 = ph!!.getString(URLFactory.BED_TIME)?.let { simpleDateFormat.parse(it) }
+            date1 = SharedPreferencesManager.wakeUpTime.let { simpleDateFormat.parse(it) }
+            date2 = SharedPreferencesManager.sleepingTime.let { simpleDateFormat.parse(it) }
 
             return date1!!.time > date2!!.time
         } catch (e: java.lang.Exception) {
@@ -165,25 +166,23 @@ class InitUserInfoFragment:
         return false
     }
 
-    fun setAlarm() {
-        val minute_interval: Int = ph!!.getInt(URLFactory.INTERVAL)
+    private fun setAlarm() {
+        val minute_interval = SharedPreferencesManager.notificationFreq
 
-        if (sh!!.check_blank_data(ph!!.getString(URLFactory.WAKE_UP_TIME)) || sh!!.check_blank_data(
-                ph!!.getString(
-                    URLFactory.BED_TIME
-                )
+        if (sh!!.check_blank_data(SharedPreferencesManager.wakeUpTime) || sh!!.check_blank_data(
+                SharedPreferencesManager.sleepingTime
             )
         ) {
             return
         } else {
             val startTime: Calendar = Calendar.getInstance(Locale.getDefault())
-            startTime.set(Calendar.HOUR_OF_DAY, ph!!.getInt(URLFactory.WAKE_UP_TIME_HOUR))
-            startTime.set(Calendar.MINUTE, ph!!.getInt(URLFactory.WAKE_UP_TIME_MINUTE))
+            startTime.set(Calendar.HOUR_OF_DAY, SharedPreferencesManager.wakeUpTimeHour)
+            startTime.set(Calendar.MINUTE, SharedPreferencesManager.wakeUpTimeMinute)
             startTime.set(Calendar.SECOND, 0)
 
             val endTime: Calendar = Calendar.getInstance(Locale.getDefault())
-            endTime.set(Calendar.HOUR_OF_DAY, ph!!.getInt(URLFactory.BED_TIME_HOUR))
-            endTime.set(Calendar.MINUTE, ph!!.getInt(URLFactory.BED_TIME_MINUTE))
+            endTime.set(Calendar.HOUR_OF_DAY, SharedPreferencesManager.sleepTimeHour)
+            endTime.set(Calendar.MINUTE, SharedPreferencesManager.sleepTimeMinute)
             endTime.set(Calendar.SECOND, 0)
 
             if (isNextDayEnd()) endTime.add(Calendar.DATE, 1)
@@ -197,10 +196,7 @@ class InitUserInfoFragment:
                 val initialValues = ContentValues()
                 initialValues.put(
                     "AlarmTime",
-                    ("" + ph!!.getString(URLFactory.WAKE_UP_TIME)).toString() + " - " + ph!!.getString(
-                        URLFactory.BED_TIME
-                    )
-                )
+                    "" + SharedPreferencesManager.wakeUpTime.toString() + " - " + SharedPreferencesManager.sleepingTime)
                 initialValues.put("AlarmId", "" + _id)
                 initialValues.put("AlarmType", "R")
                 initialValues.put("AlarmInterval", "" + minute_interval)
@@ -226,7 +222,9 @@ class InitUserInfoFragment:
                         var time = ""
 
                         time =
-                            (startTime.get(Calendar.HOUR_OF_DAY).toString() + ":" + startTime.get(Calendar.MINUTE)).toString() + ":" + startTime.get(
+                            (startTime.get(Calendar.HOUR_OF_DAY).toString() +
+                                    ":" + startTime.get(Calendar.MINUTE)).toString() +
+                                    ":" + startTime.get(
                                 Calendar.SECOND
                             )
                         dt = sdf.parse(time)!!
@@ -275,7 +273,7 @@ class InitUserInfoFragment:
                         e.printStackTrace()
                     }
 
-                    startTime.add(Calendar.MINUTE, minute_interval)
+                    startTime.add(Calendar.MINUTE, minute_interval.toInt())
                 }
             } else {
                 return
@@ -283,7 +281,7 @@ class InitUserInfoFragment:
         }
     }
 
-    fun deleteAutoAlarm(alsoData: Boolean) {
+    private fun deleteAutoAlarm(alsoData: Boolean) {
         val arr_data: ArrayList<HashMap<String, String>> = dh!!.getdata("tbl_alarm_details")
 
         for (k in arr_data.indices) {
@@ -304,7 +302,7 @@ class InitUserInfoFragment:
     }
 
     private fun gotoHomeScreen() {
-        ph!!.savePreferences(URLFactory.HIDE_WELCOME_SCREEN, true)
+        SharedPreferencesManager.hideWelcomeScreen = true
 
         setAlarm()
 

@@ -1,19 +1,14 @@
 package rpt.tool.mementobibere.utils.helpers
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.database.Cursor
-import android.os.Build
 import android.os.Environment
-import android.util.Log
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Date_Helper
-import rpt.tool.mementobibere.basic.appbasiclibs.utils.Preferences_Helper
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.data.backuprestore.AlarmDetails
 import rpt.tool.mementobibere.utils.data.backuprestore.AlarmSubDetails
@@ -22,6 +17,8 @@ import rpt.tool.mementobibere.utils.data.backuprestore.BloodDonor
 import rpt.tool.mementobibere.utils.data.backuprestore.ContainerDetails
 import rpt.tool.mementobibere.utils.data.backuprestore.DrinkDetails
 import rpt.tool.mementobibere.utils.data.backuprestore.ReachedGoal
+import rpt.tool.mementobibere.utils.log.d
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -30,38 +27,18 @@ import java.io.OutputStreamWriter
 
 internal class BackupHelper(private val mContext: Context) {
     var dth: Date_Helper = Date_Helper()
-    var ph: Preferences_Helper = Preferences_Helper(mContext)
+
 
     fun createAutoBackSetup() {
-        if (!ph.getBoolean(URLFactory.AUTO_BACK_UP)) return
+        if (!SharedPreferencesManager.autoBackUp) return
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkStoragePermissions()
-        } else {
-            backup_data()
-        }
+        backup_data()
     }
 
-    fun checkStoragePermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(
-                    mContext,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(
-                    mContext,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-            } else {
-                backup_data()
-            }
-        }
-    }
 
     fun backup_data() {
-        var arr_data = getdata("tbl_container_details")
+        var arr_data = getData("tbl_container_details")
 
         val backupRestore: BackupRestore = BackupRestore()
 
@@ -79,7 +56,7 @@ internal class BackupHelper(private val mContext: Context) {
             containerDetailsList.add(containerDetails)
         }
 
-        arr_data = getdata("tbl_drink_details")
+        arr_data = getData("tbl_drink_details")
 
         val drinkDetailsList: MutableList<DrinkDetails> = ArrayList<DrinkDetails>()
 
@@ -97,7 +74,7 @@ internal class BackupHelper(private val mContext: Context) {
             drinkDetailsList.add(drinkDetails)
         }
 
-        arr_data = getdata("tbl_alarm_details")
+        arr_data = getData("tbl_alarm_details")
 
         val alarmDetailsList: MutableList<AlarmDetails> = ArrayList<AlarmDetails>()
 
@@ -129,9 +106,9 @@ internal class BackupHelper(private val mContext: Context) {
 
             val alarmSubDetailsList: MutableList<AlarmSubDetails> = ArrayList<AlarmSubDetails>()
 
-            val arr_data2 = getdata("tbl_alarm_sub_details", "SuperId=" + arr_data[k]["id"])
+            val arr_data2 = getData("tbl_alarm_sub_details", "SuperId=" + arr_data[k]["id"])
 
-            Log.d("arr_data2 : ", "" + arr_data2.size)
+            d("arr_data2 : ", "" + arr_data2.size)
 
             for (j in arr_data2.indices) {
                 val alarmSubDetails: AlarmSubDetails = AlarmSubDetails()
@@ -147,7 +124,7 @@ internal class BackupHelper(private val mContext: Context) {
             alarmDetailsList.add(alarmDetails)
         }
 
-        arr_data = getdata("tbl_blood_donor")
+        arr_data = getData("tbl_blood_donor")
 
         val bloodDonorList: MutableList<BloodDonor> = ArrayList<BloodDonor>()
 
@@ -158,7 +135,7 @@ internal class BackupHelper(private val mContext: Context) {
             bloodDonorList.add(bloodDonor)
         }
 
-        arr_data = getdata("tbl_reached_goal")
+        arr_data = getData("tbl_reached_goal")
 
         val reachedList: MutableList<ReachedGoal> = ArrayList<ReachedGoal>()
 
@@ -178,32 +155,32 @@ internal class BackupHelper(private val mContext: Context) {
         backupRestore.bloodDonorList = bloodDonorList
         backupRestore.reachedGoalList = reachedList
 
-        backupRestore.totalDrink = ph.getFloat(URLFactory.DAILY_WATER)
+        backupRestore.totalDrink = SharedPreferencesManager.dailyWater
 
-        backupRestore.totalHeight = ph.getString(URLFactory.PERSON_WEIGHT)
-        backupRestore.totalWeight = ph.getString(URLFactory.PERSON_HEIGHT)
+        backupRestore.totalHeight = SharedPreferencesManager.personWeight
+        backupRestore.totalWeight = SharedPreferencesManager.personHeight
 
-        backupRestore.isCMUnit(ph.getBoolean(URLFactory.PERSON_HEIGHT_UNIT))
-        backupRestore.isKgUnit(ph.getBoolean(URLFactory.PERSON_WEIGHT_UNIT))
-        backupRestore.isMlUnit(ph.getBoolean(URLFactory.PERSON_WEIGHT_UNIT))
-
-
-        backupRestore.reminderOption = ph.getInt(URLFactory.REMINDER_OPTION)
-        backupRestore.reminderSound = ph.getInt(URLFactory.REMINDER_SOUND)
-        backupRestore.isDisableNotifiction(ph.getBoolean(URLFactory.DISABLE_NOTIFICATION))
-        backupRestore.isManualReminderActive(ph.getBoolean(URLFactory.IS_MANUAL_REMINDER))
-        backupRestore.isReminderVibrate(ph.getBoolean(URLFactory.REMINDER_VIBRATE))
-
-        backupRestore.userName = ph.getString(URLFactory.USER_NAME)
-        backupRestore.userGender = ph.getBoolean(URLFactory.USER_GENDER)
-        backupRestore.bloodDonor = ph.getBoolean(URLFactory.BLOOD_DONOR)
-
-        backupRestore.isDisableSound(ph.getBoolean(URLFactory.DISABLE_SOUND_WHEN_ADD_WATER))
+        backupRestore.isCMUnit(SharedPreferencesManager.heightUnit)
+        backupRestore.isKgUnit(SharedPreferencesManager.weightUnit)
+        backupRestore.isMlUnit(SharedPreferencesManager.weightUnit)
 
 
-        backupRestore.isAutoBackup(ph.getBoolean(URLFactory.AUTO_BACK_UP))
-        backupRestore.autoBackupType = ph.getInt(URLFactory.AUTO_BACK_UP_TYPE)
-        backupRestore.setAutoBackupID(ph.getInt(URLFactory.AUTO_BACK_UP_ID))
+        backupRestore.reminderOption = SharedPreferencesManager.reminderOpt
+        backupRestore.reminderSound = SharedPreferencesManager.reminderSound
+        backupRestore.isDisableNotifiction(SharedPreferencesManager.disableNotification)
+        backupRestore.isManualReminderActive(SharedPreferencesManager.isManualReminder)
+        backupRestore.isReminderVibrate(SharedPreferencesManager.reminderVibrate)
+
+        backupRestore.userName = SharedPreferencesManager.userName
+        backupRestore.userGender = SharedPreferencesManager.userGender
+        backupRestore.bloodDonor = SharedPreferencesManager.bloodDonorKey
+
+        backupRestore.isDisableSound(SharedPreferencesManager.disableSoundWhenAddWater)
+
+
+        backupRestore.isAutoBackup(SharedPreferencesManager.autoBackUp)
+        backupRestore.autoBackupType = SharedPreferencesManager.autoBackUpType
+        backupRestore.setAutoBackupID(SharedPreferencesManager.autoBackUpId)
 
 
         val jsondata: String = Gson().toJson(backupRestore)
@@ -253,7 +230,8 @@ internal class BackupHelper(private val mContext: Context) {
         }
     }
 
-    fun getdata(table_name: String): ArrayList<HashMap<String?, String>> {
+    @SuppressLint("Recycle")
+    fun getData(table_name: String): ArrayList<HashMap<String?, String>> {
         val maplist = ArrayList<HashMap<String?, String>>()
 
         val query = "SELECT * FROM $table_name"
@@ -274,7 +252,8 @@ internal class BackupHelper(private val mContext: Context) {
         return maplist
     }
 
-    fun getdata(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
+    @SuppressLint("Recycle")
+    fun getData(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
         val maplist = ArrayList<HashMap<String, String>>()
 
         var query = "SELECT * FROM $table_name"

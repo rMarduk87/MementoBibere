@@ -297,8 +297,14 @@ class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelpe
         return dbToUse.rawQuery(selectQuery, null)
     }
 
-    fun start(boolean: Boolean) {
+    fun start(boolean: Boolean):Boolean {
         create = boolean
-        val db = this.writableDatabase
+        try {
+            val db = this.writableDatabase
+            return true
+        }
+        catch (e:Exception){
+            return false
+        }
     }
 }

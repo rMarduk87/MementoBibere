@@ -19,7 +19,7 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
 
-            if (ph!!.getBoolean(URLFactory.IS_PREGNANT)) {
+            if (spm!!.getBoolean(URLFactory.IS_PREGNANT)) {
                 binding.pregnantBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
                 binding.imgPregnant.setImageResource(R.drawable.pregnant_selected)
             } else {
@@ -27,7 +27,7 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
                 binding.imgPregnant.setImageResource(R.drawable.pregnant)
             }
 
-            if (ph!!.getBoolean(URLFactory.IS_BREATFEEDING)) {
+            if (spm!!.getBoolean(URLFactory.IS_BREATFEEDING)) {
                 binding.breastfeedingBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
                 binding.imgBreastfeeding.setImageResource(R.drawable.breastfeeding_selected)
             } else {
@@ -37,7 +37,7 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
 
 
 
-            if (ph!!.getBoolean(URLFactory.USER_GENDER)) // female
+            if (spm!!.getBoolean(URLFactory.USER_GENDER)) // female
             {
 
                 binding.pregnantBlock.isFocusableInTouchMode = true
@@ -93,43 +93,43 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
         setBloodDonor()
 
         binding.activeBlock.setOnClickListener {
-            if (ph!!.getBoolean(URLFactory.IS_ACTIVE)) ph!!.savePreferences(URLFactory.IS_ACTIVE, false)
-            else ph!!.savePreferences(URLFactory.IS_ACTIVE, true)
+            if (spm!!.getBoolean(URLFactory.IS_ACTIVE)) spm!!.savePreferences(URLFactory.IS_ACTIVE, false)
+            else spm!!.savePreferences(URLFactory.IS_ACTIVE, true)
             setActive()
         }
 
         binding.pregnantBlock.setOnClickListener {
-            if (ph!!.getBoolean(URLFactory.IS_PREGNANT)) ph!!.savePreferences(
+            if (spm!!.getBoolean(URLFactory.IS_PREGNANT)) spm!!.savePreferences(
                 URLFactory.IS_PREGNANT,
                 false
             )
-            else ph!!.savePreferences(URLFactory.IS_PREGNANT, true)
+            else spm!!.savePreferences(URLFactory.IS_PREGNANT, true)
             setPregnant()
         }
 
         binding.breastfeedingBlock.setOnClickListener {
-            if (ph!!.getBoolean(URLFactory.IS_BREATFEEDING)) ph!!.savePreferences(
+            if (spm!!.getBoolean(URLFactory.IS_BREATFEEDING)) spm!!.savePreferences(
                 URLFactory.IS_BREATFEEDING,
                 false
             )
-            else ph!!.savePreferences(URLFactory.IS_BREATFEEDING, true)
+            else spm!!.savePreferences(URLFactory.IS_BREATFEEDING, true)
             setBreastfeeding()
         }
 
         binding.bloodDonorBlock.setOnClickListener {
-            if (ph!!.getBoolean(URLFactory.BLOOD_DONOR)) ph!!.savePreferences(
+            if (spm!!.getBoolean(URLFactory.BLOOD_DONOR)) spm!!.savePreferences(
                 URLFactory.BLOOD_DONOR,
                 false
             )
-            else ph!!.savePreferences(URLFactory.BLOOD_DONOR, true)
+            else spm!!.savePreferences(URLFactory.BLOOD_DONOR, true)
             setBloodDonor()
         }
     }
 
     private fun setActive() {
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
 
-        if (ph!!.getBoolean(URLFactory.IS_ACTIVE)) {
+        if (spm!!.getBoolean(URLFactory.IS_ACTIVE)) {
             binding.activeBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
             binding.imgActive.setImageResource(R.drawable.active_selected)
         } else {
@@ -137,13 +137,13 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
             binding.imgActive.setImageResource(R.drawable.active)
         }
 
-        ph!!.savePreferences(URLFactory.SET_WORK_OUT, true)
+        spm!!.savePreferences(URLFactory.SET_WORK_OUT, true)
     }
 
     private fun setPregnant() {
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
 
-        if (ph!!.getBoolean(URLFactory.IS_PREGNANT)) {
+        if (spm!!.getBoolean(URLFactory.IS_PREGNANT)) {
             binding.pregnantBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
             binding.imgPregnant.setImageResource(R.drawable.pregnant_selected)
         } else {
@@ -153,9 +153,9 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
     }
 
     private fun setBreastfeeding() {
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
 
-        if (ph!!.getBoolean(URLFactory.IS_BREATFEEDING)) {
+        if (spm!!.getBoolean(URLFactory.IS_BREATFEEDING)) {
             binding.breastfeedingBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
             binding.imgBreastfeeding.setImageResource(R.drawable.breastfeeding_selected)
         } else {
@@ -165,9 +165,9 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
     }
 
     private fun setBloodDonor() {
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
 
-        if (ph!!.getBoolean(URLFactory.BLOOD_DONOR)) {
+        if (spm!!.getBoolean(URLFactory.BLOOD_DONOR)) {
             binding.bloodDonorBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
             binding.imgBloodDonor.setImageResource(R.drawable.ic_donor_selected)
         } else {
@@ -175,6 +175,6 @@ class UserInfoStatusFragment : BaseFragment<FragmentUserInfoStatusBinding>(Fragm
             binding.imgBloodDonor.setImageResource(R.drawable.ic_donor_normal)
         }
 
-        ph!!.savePreferences(URLFactory.SET_BLOOD_DONOR, true)
+        spm!!.savePreferences(URLFactory.SET_BLOOD_DONOR, true)
     }
 }

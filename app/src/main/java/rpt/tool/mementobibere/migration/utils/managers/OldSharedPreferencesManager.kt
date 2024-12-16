@@ -6,7 +6,7 @@ import android.media.RingtoneManager
 import rpt.tool.mementobibere.Application
 import rpt.tool.mementobibere.utils.AppUtils
 
-object SharedPreferencesManager {
+object OldSharedPreferencesManager {
     private val ctx: Context
         get() = Application.instance
 
@@ -124,7 +124,7 @@ object SharedPreferencesManager {
     var notificationTone: String
         get() = sharedPreferences.getString(
             AppUtils.NOTIFICATION_TONE_URI_KEY, RingtoneManager.getDefaultUri(
-            RingtoneManager.TYPE_NOTIFICATION).toString())!!
+                RingtoneManager.TYPE_NOTIFICATION).toString())!!
         set(value) = sharedPreferences.edit().putString(AppUtils.NOTIFICATION_TONE_URI_KEY, value).apply()
     var showSplashScreen: Boolean
         get() = sharedPreferences.getBoolean(AppUtils.SEE_SPLASH_KEY,true)

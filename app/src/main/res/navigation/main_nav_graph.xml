@@ -11,9 +11,6 @@
         android:label="drink_fragment_label"
         tools:layout="@layout/fragment_drink">
         <action
-            android:id="@+id/action_drinkFragment_to_infoFragment"
-            app:destination="@id/applicationInfoFragment" />
-        <action
             android:id="@+id/action_drinkFragment_to_selfFragment"
             app:destination="@id/DrinkFragment" />
         <action
@@ -41,9 +38,6 @@
             android:id="@+id/action_drinkFragment_to_batteryOptimizationDialogFragment"
             app:destination="@id/BatteryOptimizationDialogFragment" />
         <action
-            android:id="@+id/action_DrinkFragment_to_NewUserDataDialogFragment"
-            app:destination="@id/NewUserDataDialogFragment" />
-        <action
             android:id="@+id/action_DrinkFragment_to_ReminderDialogFragment"
             app:destination="@id/ReminderDialogFragment" />
         <argument
@@ -62,19 +56,6 @@
         <action
             android:id="@+id/action_DrinkFragment_to_DailyMoreThanTargetDialogFragment"
             app:destination="@id/DailyMoreThanTargetDialogFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/applicationInfoFragment"
-        android:name="rpt.tool.mementobibere.migration.ui.info.ApplicationInfoFragment"
-        android:label="info_fragment_label"
-        tools:layout="@layout/application_info_fragment">
-
-        <action
-            android:id="@+id/action_infoFragment_to_DrinkFragment"
-            app:destination="@id/DrinkFragment" />
-        <action
-            android:id="@+id/action_infoFragment_to_settingFragment"
-            app:destination="@id/applicationInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/StatsFragment"
@@ -143,11 +124,6 @@
         android:id="@+id/BatteryOptimizationDialogFragment"
         android:name="rpt.tool.mementobibere.ui.drink.dialogs.PermissionDialogFragment"
         android:label="BatteryOptimizationDialogFragment">
-    </dialog>
-    <dialog
-        android:id="@+id/NewUserDataDialogFragment"
-        android:name="rpt.tool.mementobibere.ui.drink.dialogs.NewDataDialogFragment"
-        android:label="NewUserDataDialogFragment">
     </dialog>
     <dialog
         android:id="@+id/ReminderDialogFragment"

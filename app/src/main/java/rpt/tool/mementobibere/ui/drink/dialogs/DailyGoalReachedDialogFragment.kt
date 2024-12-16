@@ -3,6 +3,7 @@ package rpt.tool.mementobibere.ui.drink.dialogs
 import android.content.ContentValues
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import androidx.navigation.fragment.navArgs
 import rpt.tool.mementobibere.BaseDialogFragment
@@ -18,10 +19,9 @@ import rpt.tool.mementobibere.utils.helpers.HeightWeightHelper.ozToMlConverter
 
 class DailyGoalReachedDialogFragment:BaseDialogFragment<DialogGoalReachedBinding>(DialogGoalReachedBinding::inflate) {
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         binding.imgCancel.setOnClickListener { dialog!!.dismiss() }
 

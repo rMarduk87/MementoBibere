@@ -14,34 +14,34 @@ import rpt.tool.mementobibere.ScreenSelectBottleActivity
 import rpt.tool.mementobibere.SplashScreenActivity
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Date_Helper
-import rpt.tool.mementobibere.basic.appbasiclibs.utils.Preferences_Helper
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.extensions.equalsIgnoreCase
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 
 /**
  * Implementation of App Widget functionality.
  */
+@Suppress("DEPRECATED_IDENTITY_EQUALS")
 class NewAppWidget : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
     override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
+
     }
 
     override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         var mContext: Context? = null
         var drink_water: Float = 0f
 
@@ -50,9 +50,7 @@ class NewAppWidget : AppWidgetProvider() {
             appWidgetId: Int
         ) {
             mContext = context
-            //CharSequence widgetText = context.getString(R.string.appwidget_text);
-            // Construct the RemoteViews object
-            val views: RemoteViews = RemoteViews(context.packageName, R.layout.new_app_widget)
+            val views = RemoteViews(context.packageName, R.layout.new_app_widget)
             views.setTextViewText(R.id.appwidget_text, get_today_report())
 
             views.setFloat(R.id.circularProgressbar, "setMax", URLFactory.DAILY_WATER_VALUE)
@@ -85,23 +83,22 @@ class NewAppWidget : AppWidgetProvider() {
             )
 
             val dth: Date_Helper = Date_Helper()
-            val ph: Preferences_Helper = Preferences_Helper(mContext!!)
 
-            val arr_data = getdata(
+            val arr_data = getData(
                 "tbl_drink_details",
                 ("DrinkDate ='" + dth.getCurrentDate("dd-MM-yyyy")).toString() + "'"
             )
 
-            if (ph.getFloat(URLFactory.DAILY_WATER) === 0f) {
+            if (SharedPreferencesManager.dailyWater === 0f) {
                 URLFactory.DAILY_WATER_VALUE = 2500f
             } else {
-                URLFactory.DAILY_WATER_VALUE = ph.getFloat(URLFactory.DAILY_WATER)
+                URLFactory.DAILY_WATER_VALUE = SharedPreferencesManager.dailyWater
             }
 
-            if (check_blank_data("" + ph.getString(URLFactory.WATER_UNIT))) {
+            if (check_blank_data("" + SharedPreferencesManager.waterUnit)) {
                 URLFactory.WATER_UNIT_VALUE = "ML"
             } else {
-                URLFactory.WATER_UNIT_VALUE = ph.getString(URLFactory.WATER_UNIT)!!
+                URLFactory.WATER_UNIT_VALUE = SharedPreferencesManager.waterUnit
             }
 
             drink_water = 0f
@@ -113,25 +110,16 @@ class NewAppWidget : AppWidgetProvider() {
                         .toDouble().toFloat()
                 }
             }
-
-
-            /*if(drink_water==0)
-        {
-            return mContext.getResources().getString(R.string.str_have_u_had_any_water_yet);
-        }*/
-
-
-            //d("Today Completed: ",""+drink_water+" "+URLFactory.WATER_UNIT_VALUE+" Total: "+URLFactory.DAILY_WATER_VALUE+" "+URLFactory.WATER_UNIT_VALUE);
-            return "" + drink_water.toInt() + "/" + URLFactory.DAILY_WATER_VALUE + " " + URLFactory.WATER_UNIT_VALUE
-
-            //return "Today Completed: "+drink_water+"/"+URLFactory.DAILY_WATER_VALUE+" "+URLFactory.WATER_UNIT_VALUE;
+            return "" + drink_water.toInt() + "/" + URLFactory.DAILY_WATER_VALUE + " " +
+                    URLFactory.WATER_UNIT_VALUE
         }
 
         fun check_blank_data(data: String?): Boolean {
-            return data == "" || data!!.isEmpty() || data.isEmpty() || data == "null" || data == null
+            return data == "" || data!!.isEmpty() || data.isEmpty() || data == "null"
         }
 
-        fun getdata(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
+        @SuppressLint("Recycle")
+        fun getData(table_name: String, where_con: String): ArrayList<HashMap<String, String>> {
             val maplist = ArrayList<HashMap<String, String>>()
 
             var query = "SELECT * FROM $table_name"

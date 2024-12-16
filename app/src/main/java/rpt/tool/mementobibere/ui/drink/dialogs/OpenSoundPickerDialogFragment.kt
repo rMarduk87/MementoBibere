@@ -21,12 +21,11 @@ class OpenSoundPickerDialogFragment:BaseDialogFragment<DialogSoundPickBinding>(D
     var soundAdapter: SoundAdapter? = null
     var lst_sounds: ArrayList<SoundModel> = ArrayList()
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
         loadSounds()
-
-        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         binding.btnCancel.setOnClickListener { dialog!!.dismiss() }
 

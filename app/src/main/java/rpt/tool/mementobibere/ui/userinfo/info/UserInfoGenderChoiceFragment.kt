@@ -24,8 +24,8 @@ class UserInfoGenderChoiceFragment :
         binding.femaleBlock.setOnClickListener { setGender(false) }
         
 
-        binding.txtUserName.setText(ph!!.getString(URLFactory.USER_NAME))
-        setGender(!ph!!.getBoolean(URLFactory.USER_GENDER))
+        binding.txtUserName.setText(spm!!.getString(URLFactory.USER_NAME))
+        setGender(!spm!!.getBoolean(URLFactory.USER_GENDER))
 
         binding.txtUserName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -35,24 +35,24 @@ class UserInfoGenderChoiceFragment :
             }
 
             override fun afterTextChanged(editable: Editable) {
-                ph!!.savePreferences(
+                spm!!.savePreferences(
                     URLFactory.USER_NAME,
                     binding.txtUserName.getText().toString().trim { it <= ' ' })
 
-                ph!!.savePreferences(URLFactory.SET_USER_NAME, true)
+                spm!!.savePreferences(URLFactory.SET_USER_NAME, true)
             }
         })
     }
 
     private fun setGender(isMale: Boolean) {
-        ph!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
 
         if (isMale) {
 
-            ph!!.savePreferences(URLFactory.USER_GENDER, false)
+            spm!!.savePreferences(URLFactory.USER_GENDER, false)
 
-            ph!!.savePreferences(URLFactory.IS_PREGNANT, false)
-            ph!!.savePreferences(URLFactory.IS_BREATFEEDING, false)
+            spm!!.savePreferences(URLFactory.IS_PREGNANT, false)
+            spm!!.savePreferences(URLFactory.IS_BREATFEEDING, false)
 
             binding.maleBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
             binding.imgMale.setImageResource(R.drawable.ic_male_selected)
@@ -60,12 +60,12 @@ class UserInfoGenderChoiceFragment :
             binding.femaleBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_regular)
             binding.imgFemale.setImageResource(R.drawable.ic_female_normal)
 
-            ph!!.savePreferences(URLFactory.SET_USER_GENDER, true)
+            spm!!.savePreferences(URLFactory.SET_USER_GENDER, true)
 
         } else {
 
-            ph!!.savePreferences(URLFactory.USER_GENDER, true)
-            ph!!.savePreferences(URLFactory.SET_USER_GENDER, true)
+            spm!!.savePreferences(URLFactory.USER_GENDER, true)
+            spm!!.savePreferences(URLFactory.SET_USER_GENDER, true)
 
             binding.maleBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_regular)
             binding.imgMale.setImageResource(R.drawable.ic_male_normal)

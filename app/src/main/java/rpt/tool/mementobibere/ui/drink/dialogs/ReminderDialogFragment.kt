@@ -3,8 +3,6 @@ package rpt.tool.mementobibere.ui.drink.dialogs
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import rpt.tool.mementobibere.BaseDialogFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant.ph
@@ -16,14 +14,10 @@ import rpt.tool.mementobibere.utils.navigation.safeNavigate
 
 class ReminderDialogFragment:BaseDialogFragment<DialogReminderBinding>(DialogReminderBinding::inflate) {
 
+
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        dialog!!.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog!!.window!!.setBackgroundDrawableResource(R.drawable.drawable_background_tra)
-        dialog!!.window!!.attributes.windowAnimations = R.style.DialogAnimation
-        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         
         binding.advanceSettings.setOnClickListener {
             dialog!!.dismiss()

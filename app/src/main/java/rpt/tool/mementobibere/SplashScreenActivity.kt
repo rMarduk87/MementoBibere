@@ -13,6 +13,7 @@ import rpt.tool.mementobibere.basic.appbasiclibs.BaseAppCompatActivity
 import rpt.tool.mementobibere.databinding.ActivitySplashScreenBinding
 import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.URLFactory
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.widget.NewAppWidget
 
 
@@ -25,8 +26,6 @@ class SplashScreenActivity : BaseAppCompatActivity() {
     private lateinit var sharedPref: SharedPreferences
     var handler: Handler? = null
     var runnable: Runnable? = null
-
-    var img_splash_logo: ImageView? = null
 
 
     companion object {
@@ -72,28 +71,29 @@ class SplashScreenActivity : BaseAppCompatActivity() {
 
     }
 
+    @SuppressLint("UnsafeIntentLaunch")
     override fun onResume() {
         super.onResume()
 
-        if (ph!!.getFloat(URLFactory.DAILY_WATER) == 0f) {
+        if (SharedPreferencesManager.dailyWater == 0f) {
             URLFactory.DAILY_WATER_VALUE = 2500f
         } else {
-            URLFactory.DAILY_WATER_VALUE = ph!!.getFloat(URLFactory.DAILY_WATER)
+            URLFactory.DAILY_WATER_VALUE = SharedPreferencesManager.dailyWater
         }
 
-        if (sh!!.check_blank_data("" + ph!!.getString(URLFactory.WATER_UNIT))) {
+        if (sh!!.check_blank_data("" + SharedPreferencesManager.waterUnit)) {
             URLFactory.WATER_UNIT_VALUE = "ml"
         } else {
-            URLFactory.WATER_UNIT_VALUE = ph!!.getString(URLFactory.WATER_UNIT)!!
+            URLFactory.WATER_UNIT_VALUE = SharedPreferencesManager.waterUnit
         }
 
         runnable = Runnable {
-            if (ph!!.getBoolean(URLFactory.HIDE_WELCOME_SCREEN)) {
+            if (SharedPreferencesManager.hideWelcomeScreen) {
                 intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
             } else {
-                ph!!.savePreferences(URLFactory.PERSON_WEIGHT_UNIT, true)
-                ph!!.savePreferences(URLFactory.PERSON_WEIGHT, "80")
-                ph!!.savePreferences(URLFactory.USER_NAME, "")
+                SharedPreferencesManager.weightUnit = true
+                SharedPreferencesManager.personWeight = "80"
+                SharedPreferencesManager.userName = ""
                 intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
             }
             startActivity(intent)
