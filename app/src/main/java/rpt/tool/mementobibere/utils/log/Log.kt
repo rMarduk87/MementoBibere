@@ -22,5 +22,9 @@ internal class Log {
         fun logVerbose(logMessage: String, className: String) {
             Timber.tag("$logPrefix$className").v(logMessage)
         }
+
+        fun logInfo(logMessage: String, className: String) {
+            Timber.tag("$logPrefix$className").i(logMessage)
+        }
     }
 }

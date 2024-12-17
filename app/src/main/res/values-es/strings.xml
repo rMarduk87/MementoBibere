@@ -326,6 +326,8 @@
     <string name="img">img</string>
     <string name="str_reached">Reached\nGoal</string>
     <string name="str_no_reached_goal_found">No Reached Goal Found!!!</string>
+    <string name="str_add_reached">Want to add more dates when you reached your daily goal?</string>
+    <string name="str_reached_remove_confirm_message">Are you sure? Do you want to delete reached goal log?</string>
 
     <!-- Country Code -->
     <string-array name="CountryCodes" >

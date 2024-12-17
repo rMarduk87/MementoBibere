@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
@@ -21,7 +20,7 @@ import java.util.Locale
 @SuppressLint("NewApi")
 class AlarmAdapter(
     var mContext: Context,
-    alarmList: ArrayList<AlarmModel>,
+    alarmList: List<*>,
     var callBack: CallBack
 ) : RecyclerView.Adapter<AlarmAdapter.ViewHolder?>() {
     private val alarmList: ArrayList<AlarmModel> = alarmList

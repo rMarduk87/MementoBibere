@@ -83,6 +83,12 @@
         <action
             android:id="@+id/action_settingsFragment_to_drinkFragment"
             app:destination="@id/DrinkFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_backUpRestoreFragment"
+            app:destination="@id/BackUpRestoreFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_profileFragment"
+            app:destination="@id/UserProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/FaqFragment"
@@ -110,6 +116,9 @@
         <action
             android:id="@+id/action_reminderFragment_to_drinkFragment"
             app:destination="@id/DrinkFragment" />
+        <action
+            android:id="@+id/action_reminderFragment_to_openSoundPickerDialogFragment"
+            app:destination="@id/OpenSoundPickerDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/ReachedFragment"
@@ -119,6 +128,15 @@
         <action
             android:id="@+id/action_reachedFragment_to_drinkFragment"
             app:destination="@id/DrinkFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/BackUpRestoreFragment"
+        android:name="rpt.tool.mementobibere.ui.backup.BackUpRestoreFragment"
+        android:label="BackUpRestoreFragment"
+        tools:layout="@layout/fragment_backup_restore">
+        <action
+            android:id="@+id/action_backUpRestoreFragment_to_settingsFragment"
+            app:destination="@id/SettingsFragment" />
     </fragment>
     <dialog
         android:id="@+id/BatteryOptimizationDialogFragment"

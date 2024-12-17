@@ -1,5 +1,7 @@
 package rpt.tool.mementobibere
 
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -63,5 +65,19 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun getThemeColor(ctx: Context): Int {
+            return ctx.resources.getColor(R.color.colorPrimaryDark)
+        }
+
+        fun getThemeColorArray(ctx: Context?): IntArray {
+            val colors = intArrayOf(
+                Color.parseColor("#001455da"),
+                Color.parseColor("#FF1455da"))
+
+            return colors
+        }
     }
 }
