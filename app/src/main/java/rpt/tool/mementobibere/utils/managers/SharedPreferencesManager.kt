@@ -123,4 +123,25 @@ object SharedPreferencesManager {
     var autoBackUpId: Int
         get() = sharedPreferences.getInt(URLFactory.AUTO_BACK_UP_ID, 1)
         set(value) = sharedPreferences.edit().putInt(URLFactory.AUTO_BACK_UP_ID, value).apply()
+    var setUserName: Boolean
+        get() = sharedPreferences.getBoolean(URLFactory.SET_USER_NAME,false)
+        set(value) = sharedPreferences.edit().putBoolean(URLFactory.SET_USER_NAME, value).apply()
+    var setHeight: Boolean
+        get() = sharedPreferences.getBoolean(URLFactory.SET_HEIGHT,false)
+        set(value) = sharedPreferences.edit().putBoolean(URLFactory.SET_HEIGHT, value).apply()
+    var userPhoto: String
+        get() = sharedPreferences.getString(URLFactory.USER_PHOTO, "").toString()
+        set(value) = sharedPreferences.edit().putString(URLFactory.USER_PHOTO, value).apply()
+    var selectedContainer: Int
+        get() = sharedPreferences.getInt(URLFactory.SELECTED_CONTAINER, 1)
+        set(value) = sharedPreferences.edit().putInt(URLFactory.SELECTED_CONTAINER, value).apply()
+    var isPregnant: Boolean
+        get() = sharedPreferences.getBoolean(URLFactory.IS_PREGNANT,false)
+        set(value) = sharedPreferences.edit().putBoolean(URLFactory.IS_PREGNANT, value).apply()
+    var isBreastfeeding: Boolean
+        get() = sharedPreferences.getBoolean(URLFactory.IS_BREATFEEDING,false)
+        set(value) = sharedPreferences.edit().putBoolean(URLFactory.IS_BREATFEEDING, value).apply()
+    var setManuallyGoalValue: Float
+        get() = sharedPreferences.getFloat(URLFactory.SET_MANUALLY_GOAL_VALUE, 0f)
+        set(value) = sharedPreferences.edit().putFloat(URLFactory.SET_MANUALLY_GOAL_VALUE, value).apply()
 }

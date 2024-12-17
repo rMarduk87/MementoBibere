@@ -123,8 +123,8 @@ class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelpe
                     var total = it.getFloat(8)
                     val id = it.getInt(0)
                     if(unit=="0z UK"){
-                        intook = AppUtils.ozUSToozUK(intook)
-                        total = AppUtils.ozUSToozUK(total)
+                        intook = AppUtils.ozUSToOzUK(intook)
+                        total = AppUtils.ozUSToOzUK(total)
                         unit = "fl oz"
                         db.execSQL("UPDATE $TABLE_STATS set $KEY_N_INTOOK = $intook, $KEY_N_TOTAL_INTAKE = $total," +
                                 "$KEY_UNIT = '$unit' WHERE $KEY_ID = $id")
@@ -145,7 +145,7 @@ class SqliteHelper(val context: Context,val actvity: Activity) : SQLiteOpenHelpe
                     var qta = it.getFloat(2)
                     val id = it.getInt(0)
                     if(unit=="0z UK"){
-                        qta = AppUtils.ozUSToozUK(qta)
+                        qta = AppUtils.ozUSToOzUK(qta)
                         unit = "fl oz"
                         db.execSQL("UPDATE $TABLE_REACHED set $KEY_QTA = $qta," +
                                 "$KEY_UNIT = '$unit' WHERE $KEY_ID = $id")

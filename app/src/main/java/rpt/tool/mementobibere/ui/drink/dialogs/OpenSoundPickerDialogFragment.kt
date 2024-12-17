@@ -5,15 +5,13 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import rpt.tool.mementobibere.BaseDialogFragment
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant.ph
 import rpt.tool.mementobibere.databinding.DialogSoundPickBinding
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.data.SoundModel
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.view.adapters.SoundAdapter
 
 class OpenSoundPickerDialogFragment:BaseDialogFragment<DialogSoundPickBinding>(DialogSoundPickBinding::inflate) {
@@ -32,7 +30,7 @@ class OpenSoundPickerDialogFragment:BaseDialogFragment<DialogSoundPickBinding>(D
         binding.btnSave.setOnClickListener {
             for (k in lst_sounds.indices) {
                 if (lst_sounds[k].isSelected) {
-                    ph!!.savePreferences(URLFactory.REMINDER_SOUND, k)
+                    SharedPreferencesManager.reminderSound = k
                     break
                 }
             }
@@ -78,7 +76,7 @@ class OpenSoundPickerDialogFragment:BaseDialogFragment<DialogSoundPickBinding>(D
         val soundModel = SoundModel()
         soundModel.id = index
         soundModel.name = name
-        soundModel.isSelected(ph!!.getInt(URLFactory.REMINDER_SOUND) == index)
+        soundModel.isSelected(SharedPreferencesManager.reminderSound == index)
 
         return soundModel
     }

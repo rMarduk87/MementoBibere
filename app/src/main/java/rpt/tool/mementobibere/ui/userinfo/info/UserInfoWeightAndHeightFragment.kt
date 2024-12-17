@@ -1,5 +1,6 @@
 package rpt.tool.mementobibere.ui.userinfo.info
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -8,12 +9,15 @@ import android.view.View
 import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.databinding.FragmentUserInfoWeightAndHeightBinding
+import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.custom.DigitsInputFilter
 import rpt.tool.mementobibere.utils.custom.InputFilterRange
 import rpt.tool.mementobibere.utils.custom.InputFilterWeightRange
 import rpt.tool.mementobibere.utils.helpers.HeightWeightHelper
 import rpt.tool.mementobibere.utils.log.d
+import rpt.tool.mementobibere.utils.log.e
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 
 class UserInfoWeightAndHeightFragment : 
     BaseFragment<FragmentUserInfoWeightAndHeightBinding>(
@@ -33,42 +37,42 @@ class UserInfoWeightAndHeightFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
-            init_WeightLB()
-            init_WeightKG()
+        if (SharedPreferencesManager.weightUnit) {
+            initWeightLB()
+            initWeightKG()
             binding.pickerLB.visibility = View.GONE
         } else {
-            init_WeightKG()
-            init_WeightLB()
+            initWeightKG()
+            initWeightLB()
             binding.pickerKG.visibility = View.GONE
         }
 
-        if (spm!!.getBoolean(URLFactory.PERSON_HEIGHT_UNIT)) {
-            init_HeightFeet()
-            init_HeightCM()
+        if (SharedPreferencesManager.weightUnit) {
+            initHeightFeet()
+            initHeightCM()
             binding.pickerFeet.visibility = View.GONE
         } else {
-            init_HeightCM()
-            init_HeightFeet()
+            initHeightCM()
+            initHeightFeet()
             binding.pickerCM.visibility = View.GONE
         }
         
         body()
 
 
-        binding.rdoKg.setOnCheckedChangeListener { compoundButton, b ->
+        binding.rdoKg.setOnCheckedChangeListener { _, b ->
             binding.pickerKG.visibility = if (b) View.VISIBLE else View.GONE
             binding.pickerLB.visibility = if (b) View.GONE else View.VISIBLE
         }
 
-        binding.rdoFeet.setOnCheckedChangeListener { compoundButton, b ->
+        binding.rdoFeet.setOnCheckedChangeListener { _, b ->
             binding.pickerFeet.visibility = if (b) View.VISIBLE else View.GONE
             binding.pickerCM.visibility = if (b) View.GONE else View.VISIBLE
         }
     }
 
     //===============
-    private fun init_WeightKG() {
+    private fun initWeightKG() {
 
         weight_kg_lst.clear()
         var f = 30.0f
@@ -94,10 +98,11 @@ class UserInfoWeightAndHeightFragment :
         try {
             binding.pickerKG.setTextSize(requireActivity().resources.getDimension(R.dimen.dp_30))
         } catch (e: Exception) {
+            e.message?.let { e(Throwable(e), it) }
         }
     }
 
-    private fun init_WeightLB() {
+    private fun initWeightLB() {
 
         weight_lb_lst.clear()
         for (k in 66..287) {
@@ -120,11 +125,12 @@ class UserInfoWeightAndHeightFragment :
         try {
             binding.pickerLB.setTextSize(requireActivity().resources.getDimension(R.dimen.dp_30))
         } catch (e: Exception) {
+            e.message?.let { e(Throwable(e), it) }
         }
     }
 
     //===============
-    private fun init_HeightCM() {
+    private fun initHeightCM() {
 
         height_cm_lst.clear()
         for (k in 60..240) {
@@ -147,10 +153,11 @@ class UserInfoWeightAndHeightFragment :
         try {
             binding.pickerCM.setTextSize(requireActivity().resources.getDimension(R.dimen.dp_30))
         } catch (e: Exception) {
+            e.message?.let { e(Throwable(e), it) }
         }
     }
 
-    private fun init_HeightFeet() {
+    private fun initHeightFeet() {
 
         height_feet_lst.clear()
         height_feet_lst.add("2.0")
@@ -245,10 +252,12 @@ class UserInfoWeightAndHeightFragment :
         try {
             binding.pickerFeet.setTextSize(requireActivity().resources.getDimension(R.dimen.dp_30))
         } catch (e: Exception) {
+            e.message?.let { e(Throwable(e), it) }
         }
     }
     
 
+    @SuppressLint("SetTextI18n")
     private fun body() {
         height_feet_elements.add(2.0)
         height_feet_elements.add(2.1)
@@ -323,8 +332,7 @@ class UserInfoWeightAndHeightFragment :
         height_feet_elements.add(7.10)
         height_feet_elements.add(7.11)
         height_feet_elements.add(8.0)
-
-
+        
         isExecute = false
         isExecuteSeekbar = false
         isExecuteWeight = false
@@ -333,8 +341,7 @@ class UserInfoWeightAndHeightFragment :
         binding.txtHeight.filters =
             arrayOf<InputFilter>(InputFilterRange(0.00, height_feet_elements))
         binding.txtWeight.filters = arrayOf<InputFilter>(InputFilterWeightRange(0.0, 130.0))
-
-
+        
         isExecute = true
         isExecuteSeekbar = true
         isExecuteWeight = true
@@ -399,7 +406,7 @@ class UserInfoWeightAndHeightFragment :
                 var final_height_cm = 61
 
                 try {
-                    val tmp_height = getData(binding.txtHeight.getText().toString().trim { it <= ' ' })
+                    val tmp_height = AppUtils.getData(binding.txtHeight.getText().toString().trim { it <= ' ' })
 
                     val d = binding.txtHeight.getText().toString().trim { it <= ' ' }.toFloat() as Int
 
@@ -424,6 +431,7 @@ class UserInfoWeightAndHeightFragment :
                         
                     }
                 } catch (e: Exception) {
+                    e.message?.let { e(Throwable(e), it) }
                 }
 
 
@@ -438,7 +446,7 @@ class UserInfoWeightAndHeightFragment :
                 binding.rdoCm.isClickable = false
                 binding.txtHeight.filters = arrayOf<InputFilter>(
                     DigitsInputFilter(3, 0, 240.0))
-                binding.txtHeight.setText(getData("" + final_height_cm))
+                binding.txtHeight.setText(AppUtils.getData("" + final_height_cm))
                 binding.txtHeight.setSelection(binding.txtHeight.getText()
                     .toString().trim { it <= ' ' }.length)
 
@@ -464,10 +472,11 @@ class UserInfoWeightAndHeightFragment :
 
                     final_height_feet = "$first.$second"
                 } catch (e: Exception) {
+                    e.message?.let { e(Throwable(e), it) }
                 }
 
                 for (k in height_feet_lst.indices) {
-                    if (getData(final_height_feet).equals(height_feet_lst[k], ignoreCase = true)) {
+                    if (AppUtils.getData(final_height_feet).equals(height_feet_lst[k], ignoreCase = true)) {
                         binding.pickerFeet.setSelectedItem(k)
                         break
                     }
@@ -481,7 +490,7 @@ class UserInfoWeightAndHeightFragment :
                         height_feet_elements
                     )
                 )
-                binding.txtHeight.setText(getData(final_height_feet))
+                binding.txtHeight.setText(AppUtils.getData(final_height_feet))
                 binding.txtHeight.setSelection(binding.txtHeight.getText().toString().trim { it <= ' ' }.length)
 
                 saveData()
@@ -537,6 +546,7 @@ class UserInfoWeightAndHeightFragment :
 
                     saveWeightData()
                 } catch (e: Exception) {
+                    e.message?.let { e(Throwable(e), it) }
                 }
 
                 isExecuteSeekbarWeight = true
@@ -563,7 +573,7 @@ class UserInfoWeightAndHeightFragment :
                 binding.pickerKG.setSelectedItem(sel_pos)
 
                 binding.txtWeight.filters = arrayOf<InputFilter>(InputFilterWeightRange(0.0, 130.0))
-                binding.txtWeight.setText(getData("" + URLFactory.decimalFormat2.format(tmp)))
+                binding.txtWeight.setText(AppUtils.getData("" + URLFactory.decimalFormat2.format(tmp)))
                 binding.rdoKg.isClickable = false
                 binding.rdoLb.isClickable = true
             }
@@ -592,14 +602,14 @@ class UserInfoWeightAndHeightFragment :
                 binding.txtWeight.filters =
                     arrayOf<InputFilter>(
                         DigitsInputFilter(3, 0, 287.0))
-                binding.txtWeight.setText(getData("" + tmp))
+                binding.txtWeight.setText(AppUtils.getData("" + tmp))
                 binding.rdoKg.isClickable = true
                 binding.rdoLb.isClickable = false
             }
             saveWeightData()
         }
 
-        if (spm!!.getBoolean(URLFactory.PERSON_HEIGHT_UNIT)) {
+        if (SharedPreferencesManager.weightUnit) {
             binding.rdoCm.isChecked = true
             binding.rdoCm.isClickable = false
             binding.rdoFeet.isClickable = true
@@ -609,7 +619,7 @@ class UserInfoWeightAndHeightFragment :
             binding.rdoFeet.isClickable = false
         }
 
-        if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) {
+        if (SharedPreferencesManager.weightUnit) {
             binding.rdoKg.isChecked = true
             binding.rdoKg.isClickable = false
             binding.rdoLb.isClickable = true
@@ -619,12 +629,12 @@ class UserInfoWeightAndHeightFragment :
             binding.rdoLb.isClickable = false
         }
 
-        if (!sh!!.check_blank_data(spm!!.getString(URLFactory.PERSON_HEIGHT))) {
+        if (!sh!!.check_blank_data(SharedPreferencesManager.personHeight)) {
             if (binding.rdoCm.isChecked) {
                 binding.txtHeight.filters =
                     arrayOf<InputFilter>(
                         DigitsInputFilter(3, 0, 240.0))
-                binding.txtHeight.setText(getData(spm!!.getString(URLFactory.PERSON_HEIGHT)!!))
+                binding.txtHeight.setText(AppUtils.getData(SharedPreferencesManager.personHeight))
             } else {
                 binding.txtHeight.filters = arrayOf<InputFilter>(
                     InputFilterRange(
@@ -632,7 +642,7 @@ class UserInfoWeightAndHeightFragment :
                         height_feet_elements
                     )
                 )
-                binding.txtHeight.setText(getData(spm!!.getString(URLFactory.PERSON_HEIGHT)!!))
+                binding.txtHeight.setText(AppUtils.getData(SharedPreferencesManager.personHeight))
             }
         } else {
             if (binding.rdoCm.isChecked) {
@@ -651,15 +661,15 @@ class UserInfoWeightAndHeightFragment :
             }
         }
 
-        if (!sh!!.check_blank_data(spm!!.getString(URLFactory.PERSON_WEIGHT))) {
+        if (!sh!!.check_blank_data(SharedPreferencesManager.personWeight)) {
             if (binding.rdoKg.isChecked) {
                 binding.txtWeight.filters = arrayOf<InputFilter>(InputFilterWeightRange(0.0, 130.0))
-                binding.txtWeight.setText(getData(spm!!.getString(URLFactory.PERSON_WEIGHT)!!))
+                binding.txtWeight.setText(AppUtils.getData(SharedPreferencesManager.personWeight))
             } else {
                 binding.txtWeight.filters =
                     arrayOf<InputFilter>(
                         DigitsInputFilter(3, 0, 287.0))
-                binding.txtWeight.setText(getData(spm!!.getString(URLFactory.PERSON_WEIGHT)!!))
+                binding.txtWeight.setText(AppUtils.getData(SharedPreferencesManager.personWeight))
             }
         } else {
             if (binding.rdoKg.isChecked) {
@@ -681,14 +691,10 @@ class UserInfoWeightAndHeightFragment :
                 .toString().trim { it <= ' ' } + " @@@ " + binding.txtWeight.getText()
                 .toString().trim { it <= ' ' })
 
-        spm!!.savePreferences(
-            URLFactory.PERSON_HEIGHT,
-            "" + binding.txtHeight.getText().toString().trim { it <= ' ' })
-        spm!!.savePreferences(URLFactory.PERSON_HEIGHT_UNIT, binding.rdoCm.isChecked)
-
-        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
-
-        spm!!.savePreferences(URLFactory.SET_HEIGHT, true)
+        SharedPreferencesManager.personHeight = binding.txtHeight.getText().toString().trim { it <= ' ' }
+        SharedPreferencesManager.heightUnit = binding.rdoCm.isChecked
+        SharedPreferencesManager.setManuallyGoal = false
+        SharedPreferencesManager.setHeight = true
     }
 
     fun saveWeightData() {
@@ -697,18 +703,13 @@ class UserInfoWeightAndHeightFragment :
             "" + binding.rdoKg.isChecked +
                     " @@@ " + binding.txtWeight.getText().toString().trim { it <= ' ' })
 
-        spm!!.savePreferences(
-            URLFactory.PERSON_WEIGHT,
-            "" + binding.txtWeight.getText().toString().trim { it <= ' ' })
-        spm!!.savePreferences(URLFactory.PERSON_WEIGHT_UNIT, binding.rdoKg.isChecked)
-
-        spm!!.savePreferences(URLFactory.WATER_UNIT, if (binding.rdoKg.isChecked) "ml" else "fl oz")
-
-        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
-        spm!!.savePreferences(URLFactory.SET_WEIGHT, true)
+        SharedPreferencesManager.personWeight = binding.txtWeight.getText()
+            .toString().trim { it <= ' ' }
+        SharedPreferencesManager.weightUnit = binding.rdoKg.isChecked
+        SharedPreferencesManager.waterUnit = if (binding.rdoKg.isChecked) "ml" else "fl oz"
+        SharedPreferencesManager.setManuallyGoal = false
+        SharedPreferencesManager.setWeight = true
     }
 
-    private fun getData(str: String): String {
-        return str.replace(",", ".")
-    }
+
 }

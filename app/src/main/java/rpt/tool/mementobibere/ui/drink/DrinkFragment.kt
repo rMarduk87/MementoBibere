@@ -118,7 +118,7 @@ class DrinkFragment :
         if (sh!!.check_blank_data("" + SharedPreferencesManager.waterUnit)) {
             URLFactory.WATER_UNIT_VALUE = "ml"
         } else {
-            URLFactory.WATER_UNIT_VALUE = SharedPreferencesManager.waterUnit!!
+            URLFactory.WATER_UNIT_VALUE = SharedPreferencesManager.waterUnit
         }
 
         dateNow = AppUtils.getCurrentOnlyDate()!!
@@ -142,7 +142,8 @@ class DrinkFragment :
 
         ringtone = RingtoneManager.getRingtone(
             requireContext(),
-            Uri.parse(("android.resource://" + requireContext().packageName) + "/" + R.raw.fill_water_sound)
+            Uri.parse(("android.resource://" + requireContext().packageName) +
+                    "/" + R.raw.fill_water_sound)
         )
 
         frame()
@@ -445,10 +446,10 @@ class DrinkFragment :
     }
 
     private fun setCustomDate(date: String?) {
-        count_specific_day_drink(date!!)
+        countSpecificDayDrink(date!!)
     }
 
-    fun count_specific_day_drink(custom_date: String) {
+    private fun countSpecificDayDrink(custom_date: String) {
         val arr_dataO = dh!!.getdata(
             "tbl_drink_details",
             "DrinkDate ='$custom_date'"
@@ -513,10 +514,10 @@ class DrinkFragment :
         binding.lblTotalDrunk.text = AppUtils.getData("" + (drink_water).toInt() + " " + URLFactory.WATER_UNIT_VALUE)
         binding.lblTotalGoal.text = AppUtils.getData("" + (URLFactory.DAILY_WATER_VALUE).toInt() + " " + URLFactory.WATER_UNIT_VALUE)
 
-        refresh_bottle(false, false)
+        refreshBottle(false, false)
     }
 
-    private fun refresh_bottle(isFromCurrentProgress: Boolean, isRegularAnimation: Boolean) {
+    private fun refreshBottle(isFromCurrentProgress: Boolean, isRegularAnimation: Boolean) {
         val animationDuration = (if (isRegularAnimation) 50 else 5).toLong()
 
         if (handler != null && runnable != null) handler!!.removeCallbacks(runnable!!)
@@ -620,7 +621,7 @@ class DrinkFragment :
             
         }
 
-        count_today_drink(false)
+        countTodayDrink(false)
         
         binding.selectedContainerBlock.setOnClickListener{ openChangeContainerPicker() }
         
@@ -656,19 +657,19 @@ class DrinkFragment :
                 if (random.nextBoolean()) {
                     URLFactory.RELOAD_DASHBOARD = false
                     if (URLFactory.LOAD_VIDEO_ADS) {
-                        execute_add_water()
+                        executeAddWater()
                         URLFactory.RELOAD_DASHBOARD = true
                     } else {
-                        execute_add_water()
+                        executeAddWater()
                         URLFactory.RELOAD_DASHBOARD = true
                     }
                 } else {
-                    execute_add_water()
+                    executeAddWater()
                 }
             }
         }
 
-        load_all_container()
+        loadAllContainer()
 
         val unit = SharedPreferencesManager.waterUnit
 
@@ -726,7 +727,7 @@ class DrinkFragment :
             })
     }
 
-    private fun count_today_drink(isRegularAnimation: Boolean) {
+    private fun countTodayDrink(isRegularAnimation: Boolean) {
         val arr_data = dh!!.getdata(
             "tbl_drink_details",
             "DrinkDate ='" + dth!!.getDate(filter_cal!!
@@ -754,9 +755,10 @@ class DrinkFragment :
         binding.lblTotalGoal.text = AppUtils.getData("" +
                 (URLFactory.DAILY_WATER_VALUE).toInt() + " " + URLFactory.WATER_UNIT_VALUE)
 
-        refresh_bottle(true, isRegularAnimation)
+        refreshBottle(true, isRegularAnimation)
     }
 
+    @SuppressLint("InflateParams")
     private fun openChangeContainerPicker() {
         bottomSheetDialog = BottomSheetDialog(requireActivity())
         
@@ -867,7 +869,7 @@ class DrinkFragment :
 
                 dh!!.INSERT("tbl_container_details", initialValues)
 
-                load_all_container()
+                loadAllContainer()
 
                 SharedPreferencesManager.selectedContainer = nextContainerID
 
@@ -922,7 +924,7 @@ class DrinkFragment :
         dialog.show()
     }
 
-    private fun execute_add_water() {
+    private fun executeAddWater() {
 
         if (URLFactory.WATER_UNIT_VALUE.equals("ml", ignoreCase = true)
             && drink_water > 8000
@@ -988,7 +990,6 @@ class DrinkFragment :
             return
         }
 
-
         if (!SharedPreferencesManager.disableSoundWhenAddWater) {
             ringtone!!.stop()
             ringtone!!.play()
@@ -1027,9 +1028,7 @@ class DrinkFragment :
 
         dh!!.INSERT("tbl_drink_details", initialValues)
 
-
-        count_today_drink(true)
-
+        countTodayDrink(true)
 
         val intent = Intent(requireActivity(), NewAppWidget::class.java)
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
@@ -1049,7 +1048,7 @@ class DrinkFragment :
         )
     }
 
-    private fun load_all_container() {
+    private fun loadAllContainer() {
         containerArrayList.clear()
 
         val arr_container = dh!!.getdata("tbl_container_details", "IsCustom", 1)

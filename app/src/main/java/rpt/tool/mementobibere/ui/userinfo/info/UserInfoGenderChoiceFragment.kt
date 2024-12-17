@@ -1,5 +1,6 @@
 package rpt.tool.mementobibere.ui.userinfo.info
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,6 +9,7 @@ import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.databinding.FragmentUserInfoGenderChoiceBinding
 import rpt.tool.mementobibere.utils.URLFactory
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 
 class UserInfoGenderChoiceFragment :
     BaseFragment<FragmentUserInfoGenderChoiceBinding>(FragmentUserInfoGenderChoiceBinding::inflate) {
@@ -24,8 +26,8 @@ class UserInfoGenderChoiceFragment :
         binding.femaleBlock.setOnClickListener { setGender(false) }
         
 
-        binding.txtUserName.setText(spm!!.getString(URLFactory.USER_NAME))
-        setGender(!spm!!.getBoolean(URLFactory.USER_GENDER))
+        binding.txtUserName.setText(SharedPreferencesManager.userName)
+        setGender(!SharedPreferencesManager.userGender)
 
         binding.txtUserName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -35,24 +37,22 @@ class UserInfoGenderChoiceFragment :
             }
 
             override fun afterTextChanged(editable: Editable) {
-                spm!!.savePreferences(
-                    URLFactory.USER_NAME,
-                    binding.txtUserName.getText().toString().trim { it <= ' ' })
+                SharedPreferencesManager.userName = binding.txtUserName.
+                getText().toString().trim { it <= ' ' }
 
-                spm!!.savePreferences(URLFactory.SET_USER_NAME, true)
+                SharedPreferencesManager.setUserName = true
             }
         })
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun setGender(isMale: Boolean) {
-        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        SharedPreferencesManager.setManuallyGoal = false
 
         if (isMale) {
-
-            spm!!.savePreferences(URLFactory.USER_GENDER, false)
-
-            spm!!.savePreferences(URLFactory.IS_PREGNANT, false)
-            spm!!.savePreferences(URLFactory.IS_BREATFEEDING, false)
+            SharedPreferencesManager.userGender = false
+            SharedPreferencesManager.isPregnant = false
+            SharedPreferencesManager.isBreastfeeding = false
 
             binding.maleBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
             binding.imgMale.setImageResource(R.drawable.ic_male_selected)
@@ -60,12 +60,11 @@ class UserInfoGenderChoiceFragment :
             binding.femaleBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_regular)
             binding.imgFemale.setImageResource(R.drawable.ic_female_normal)
 
-            spm!!.savePreferences(URLFactory.SET_USER_GENDER, true)
+            SharedPreferencesManager.setGender = true
 
         } else {
-
-            spm!!.savePreferences(URLFactory.USER_GENDER, true)
-            spm!!.savePreferences(URLFactory.SET_USER_GENDER, true)
+            SharedPreferencesManager.userGender = false
+            SharedPreferencesManager.setGender = true
 
             binding.maleBlock.background = requireContext().resources.getDrawable(R.drawable.rdo_gender_regular)
             binding.imgMale.setImageResource(R.drawable.ic_male_normal)

@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.View
 import rpt.tool.mementobibere.BaseDialogFragment
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant.ph
 import rpt.tool.mementobibere.databinding.DialogReminderBinding
 import rpt.tool.mementobibere.ui.drink.DrinkFragmentDirections
 import rpt.tool.mementobibere.utils.URLFactory
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.navigation.safeNavController
 import rpt.tool.mementobibere.utils.navigation.safeNavigate
 
@@ -28,16 +28,13 @@ class ReminderDialogFragment:BaseDialogFragment<DialogReminderBinding>(DialogRem
         
         binding.customSoundBlock.setOnClickListener { openSoundMenuPicker() }
         
-        binding.switchVibrate.isChecked = !ph!!.getBoolean(URLFactory.REMINDER_VIBRATE)
+        binding.switchVibrate.isChecked = !SharedPreferencesManager.reminderVibrate
 
         binding.switchVibrate.setOnCheckedChangeListener { _, isChecked ->
-            ph!!.savePreferences(
-                URLFactory.REMINDER_VIBRATE,
-                !isChecked
-            )
+            SharedPreferencesManager.reminderVibrate = !isChecked
         }
 
-        if (ph!!.getInt(URLFactory.REMINDER_OPTION) == 1) {
+        if (SharedPreferencesManager.reminderOpt == 1) {
             binding.offBlock.background =
                 requireContext().resources.getDrawable(R.drawable.drawable_circle_selected)
             binding.imgOff.setImageResource(R.drawable.ic_off_selected)
@@ -49,7 +46,7 @@ class ReminderDialogFragment:BaseDialogFragment<DialogReminderBinding>(DialogRem
             binding.autoBlock.background =
                 requireContext().resources.getDrawable(R.drawable.drawable_circle_unselected)
             binding.imgAuto.setImageResource(R.drawable.ic_auto_normal)
-        } else if (ph!!.getInt(URLFactory.REMINDER_OPTION) == 2) {
+        } else if (SharedPreferencesManager.reminderOpt == 2) {
             binding.offBlock.background =
                 requireContext().resources.getDrawable(R.drawable.drawable_circle_unselected)
             binding.imgOff.setImageResource(R.drawable.ic_off_normal)
@@ -87,7 +84,7 @@ class ReminderDialogFragment:BaseDialogFragment<DialogReminderBinding>(DialogRem
             binding.autoBlock.background =
                 requireContext().resources.getDrawable(R.drawable.drawable_circle_unselected)
             binding.imgAuto.setImageResource(R.drawable.ic_auto_normal)
-            ph!!.savePreferences(URLFactory.REMINDER_OPTION, 1)
+            SharedPreferencesManager.reminderOpt = 1
         }
 
         binding.silentBlock.setOnClickListener {
@@ -102,7 +99,7 @@ class ReminderDialogFragment:BaseDialogFragment<DialogReminderBinding>(DialogRem
             binding.autoBlock.background =
                 requireContext().resources.getDrawable(R.drawable.drawable_circle_unselected)
             binding.imgAuto.setImageResource(R.drawable.ic_auto_normal)
-            ph!!.savePreferences(URLFactory.REMINDER_OPTION, 2)
+            SharedPreferencesManager.reminderOpt = 2
         }
 
         binding.autoBlock.setOnClickListener {
@@ -117,7 +114,7 @@ class ReminderDialogFragment:BaseDialogFragment<DialogReminderBinding>(DialogRem
             binding.autoBlock.background =
                 requireContext().resources.getDrawable(R.drawable.drawable_circle_selected)
             binding.imgAuto.setImageResource(R.drawable.ic_auto_selected)
-            ph!!.savePreferences(URLFactory.REMINDER_OPTION, 0)
+            SharedPreferencesManager.reminderOpt = 0
         }
 
         binding.imgCancel.setOnClickListener { dialog!!.dismiss() }

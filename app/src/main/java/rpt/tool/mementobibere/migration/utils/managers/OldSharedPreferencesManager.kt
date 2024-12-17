@@ -16,39 +16,6 @@ object OldSharedPreferencesManager {
 
     private val sharedPreferences by lazy { createSharedPreferences() }
 
-    var themeInt: Int
-        get() = sharedPreferences.getInt(AppUtils.THEME_KEY,0)
-        set(value) = sharedPreferences.edit().putInt(AppUtils.THEME_KEY, value).apply()
-    var current_unitInt: Int
-        get() = sharedPreferences.getInt(AppUtils.UNIT_KEY,0)
-        set(value) = sharedPreferences.edit().putInt(AppUtils.UNIT_KEY, value).apply()
-    var new_unitInt: Int
-        get() = sharedPreferences.getInt(AppUtils.UNIT_NEW_KEY,0)
-        set(value) = sharedPreferences.edit().putInt(AppUtils.UNIT_NEW_KEY, value).apply()
-    var value_50: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_50_KEY,100f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_50_KEY, value).apply()
-
-    var value_100: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_100_KEY,50f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_100_KEY, value).apply()
-    var value_150: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_150_KEY,150f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_150_KEY, value).apply()
-
-    var value_200: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_200_KEY,200f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_200_KEY, value).apply()
-
-    var value_250: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_250_KEY,250f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_250_KEY, value).apply()
-    var value_300: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_300_KEY,300f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_300_KEY, value).apply()
-    var value_350: Float
-        get() = sharedPreferences.getFloat(AppUtils.VALUE_350_KEY,350f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.VALUE_350_KEY, value).apply()
     var bloodDonorKey: Int
         get() = sharedPreferences.getInt(AppUtils.BLOOD_DONOR_KEY,0)
         set(value) = sharedPreferences.edit().putInt(AppUtils.BLOOD_DONOR_KEY, value).apply()
@@ -61,18 +28,9 @@ object OldSharedPreferencesManager {
     var unitString: String
         get() = sharedPreferences.getString(AppUtils.UNIT_STRING,"ml")!!
         set(value) = sharedPreferences.edit().putString(AppUtils.UNIT_STRING, value).apply()
-    var lastIntook: Float
-        get() = sharedPreferences.getFloat(AppUtils.LAST_INTOOK_KEY, 0f)
-        set(value) = sharedPreferences.edit().putFloat(AppUtils.LAST_INTOOK_KEY, value).apply()
     var notificationFreq: Float
         get() = sharedPreferences.getInt(AppUtils.NOTIFICATION_FREQUENCY_KEY, 30).toFloat()
         set(value) = sharedPreferences.edit().putInt(AppUtils.NOTIFICATION_FREQUENCY_KEY, value.toInt()).apply()
-    var noUpdateUnit: Boolean
-        get() = sharedPreferences.getBoolean(AppUtils.NO_UPDATE_UNIT, false)
-        set(value) = sharedPreferences.edit().putBoolean(AppUtils.NO_UPDATE_UNIT, value).apply()
-    var resetNotification: Boolean
-        get() = sharedPreferences.getBoolean(AppUtils.RESET_NOTIFICATION_KEY,true)
-        set(value) = sharedPreferences.edit().putBoolean(AppUtils.RESET_NOTIFICATION_KEY, value).apply()
     var setGender: Boolean
         get() = sharedPreferences.getBoolean(AppUtils.SET_GENDER_KEY, false)
         set(value) = sharedPreferences.edit().putBoolean(AppUtils.SET_GENDER_KEY, value).apply()
@@ -97,12 +55,6 @@ object OldSharedPreferencesManager {
     var notificationStatus: Boolean
         get() = sharedPreferences.getBoolean(AppUtils.NOTIFICATION_STATUS_KEY, true)
         set(value) = sharedPreferences.edit().putBoolean(AppUtils.NOTIFICATION_STATUS_KEY, value).apply()
-    var setTips : Boolean
-        get() = sharedPreferences.getBoolean(AppUtils.SEE_TIPS_KEY,true)
-        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SEE_TIPS_KEY, value).apply()
-    var startTutorial: Boolean
-        get() = sharedPreferences.getBoolean(AppUtils.START_TUTORIAL_KEY,false)
-        set(value) = sharedPreferences.edit().putBoolean(AppUtils.START_TUTORIAL_KEY, value).apply()
     var gender: Int
         get() = sharedPreferences.getInt(AppUtils.GENDER_KEY, 0)
         set(value) = sharedPreferences.edit().putInt(AppUtils.GENDER_KEY, value).apply()
@@ -118,29 +70,9 @@ object OldSharedPreferencesManager {
     var climate: Int
         get() = sharedPreferences.getInt(AppUtils.CLIMATE_KEY, 0)
         set(value) = sharedPreferences.edit().putInt(AppUtils.CLIMATE_KEY, value).apply()
-    var notificationMsg: String
-        get() = sharedPreferences.getString(AppUtils.NOTIFICATION_MSG_KEY, "")!!
-        set(value) = sharedPreferences.edit().putString(AppUtils.NOTIFICATION_MSG_KEY, value).apply()
-    var notificationTone: String
-        get() = sharedPreferences.getString(
-            AppUtils.NOTIFICATION_TONE_URI_KEY, RingtoneManager.getDefaultUri(
-                RingtoneManager.TYPE_NOTIFICATION).toString())!!
-        set(value) = sharedPreferences.edit().putString(AppUtils.NOTIFICATION_TONE_URI_KEY, value).apply()
-    var showSplashScreen: Boolean
-        get() = sharedPreferences.getBoolean(AppUtils.SEE_SPLASH_KEY,true)
-        set(value) = sharedPreferences.edit().putBoolean(AppUtils.SEE_SPLASH_KEY, value).apply()
     var date: String
         get() = sharedPreferences.getString(
             AppUtils.DATE,
             AppUtils.getCurrentDate()!!)!!
         set(value) = sharedPreferences.edit().putString(AppUtils.DATE, value).apply()
-    var isMonth: Boolean
-        get() = sharedPreferences.getBoolean(AppUtils.STAT_IS_MONTH_KEY,true)
-        set(value) = sharedPreferences.edit().putBoolean(AppUtils.STAT_IS_MONTH_KEY, value).apply()
-    var indexMonth: Int
-        get() = sharedPreferences.getInt(AppUtils.INDEX_MONTH_KEY,-1)
-        set(value) = sharedPreferences.edit().putInt(AppUtils.INDEX_MONTH_KEY, value).apply()
-    var indexYear: Int
-        get() = sharedPreferences.getInt(AppUtils.INDEX_YEAR_KEY,-1)
-        set(value) = sharedPreferences.edit().putInt(AppUtils.INDEX_YEAR_KEY, value).apply()
 }

@@ -7,6 +7,7 @@ import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.databinding.FragmentUserInfoWeatherConditionBinding
 import rpt.tool.mementobibere.utils.URLFactory
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 
 class UserInfoWeatherConditionFragment : 
     BaseFragment<FragmentUserInfoWeatherConditionBinding>(FragmentUserInfoWeatherConditionBinding::inflate) {
@@ -18,7 +19,7 @@ class UserInfoWeatherConditionFragment :
     }
 
     private fun body() {
-        setWeather(spm!!.getInt(URLFactory.WEATHER_CONSITIONS))
+        setWeather(SharedPreferencesManager.climate)
 
         binding.sunnyBlock.setOnClickListener{ setWeather(0) }
 
@@ -31,9 +32,9 @@ class UserInfoWeatherConditionFragment :
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun setWeather(idx: Int) {
-        spm!!.savePreferences(URLFactory.SET_MANUALLY_GOAL, false)
+        SharedPreferencesManager.setManuallyGoal = false
 
-        spm!!.savePreferences(URLFactory.WEATHER_CONSITIONS, idx)
+        SharedPreferencesManager.climate = idx
 
         binding.sunnyBlock.background = if (idx == 0) requireContext().resources.getDrawable(R.drawable.rdo_gender_select)
         else requireContext().resources.getDrawable(R.drawable.rdo_gender_regular)
@@ -51,7 +52,7 @@ class UserInfoWeatherConditionFragment :
         else requireContext().resources.getDrawable(R.drawable.rdo_gender_regular)
         binding.imgSnow.setImageResource(if (idx == 3) R.drawable.snow_selected else R.drawable.snow)
 
-        spm!!.savePreferences(URLFactory.SET_CLIMATE, true)
+        SharedPreferencesManager.setClimate = true
 
     }
 }

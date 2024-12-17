@@ -20,10 +20,10 @@ import java.util.Locale
 @SuppressLint("NewApi")
 class AlarmAdapter(
     var mContext: Context,
-    alarmList: List<*>,
+    alarmList: MutableList<AlarmModel>,
     var callBack: CallBack
 ) : RecyclerView.Adapter<AlarmAdapter.ViewHolder?>() {
-    private val alarmList: ArrayList<AlarmModel> = alarmList
+    private val alarmList: MutableList<AlarmModel> = alarmList
 
     override fun getItemId(position: Int): Long {
         return 0

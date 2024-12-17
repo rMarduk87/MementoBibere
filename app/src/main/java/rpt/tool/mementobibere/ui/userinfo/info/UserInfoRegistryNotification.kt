@@ -13,6 +13,7 @@ import rpt.tool.mementobibere.basic.appbasiclibs.BaseAppCompatActivity
 import rpt.tool.mementobibere.databinding.FragmentUserInfoRegistryNotificationBinding
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.log.e
+import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -31,10 +32,10 @@ class UserInfoRegistryNotification :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        from_hour = spm!!.getInt(URLFactory.WAKE_UP_TIME_HOUR)
-        from_minute = spm!!.getInt(URLFactory.WAKE_UP_TIME_MINUTE)
-        to_hour = spm!!.getInt(URLFactory.BED_TIME_HOUR)
-        to_minute = spm!!.getInt(URLFactory.BED_TIME_MINUTE)
+        from_hour = SharedPreferencesManager.wakeUpTimeHour
+        from_minute = SharedPreferencesManager.wakeUpTimeMinute
+        to_hour = SharedPreferencesManager.sleepTimeHour
+        to_minute = SharedPreferencesManager.sleepTimeMinute
         body()
         setCount()
     }
@@ -75,7 +76,7 @@ class UserInfoRegistryNotification :
     @SuppressLint("SetTextI18n")
     private fun openAutoTimePicker(appCompatTextView: AppCompatTextView?, isFrom: Boolean) {
         val onTimeSetListener =
-            TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute, second ->
+            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute, _ ->
                 var formatedDate = ""
                 val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                 val sdfs = SimpleDateFormat("hh:mm a", Locale.getDefault())
@@ -139,7 +140,7 @@ class UserInfoRegistryNotification :
         tpd.accentColor = BaseAppCompatActivity.getThemeColor(requireContext())
     }
 
-    val isNextDayEnd: Boolean
+    private val isNextDayEnd: Boolean
         get() {
             val simpleDateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
@@ -180,36 +181,36 @@ class UserInfoRegistryNotification :
         val total_minutes = ((hours * 60) + mins).toFloat()
 
         val interval =
-            if (binding.rdo15.isChecked) 15 else if (binding.rdo30.isChecked) 30 else if (binding.rdo45.isChecked) 45 else 60
+            if (binding.rdo15.isChecked) 15 else if (binding.rdo30.isChecked) 30
+            else if (binding.rdo45.isChecked) 45 else 60
 
         var consume = 0 // @@@@@
         if (total_minutes > 0) consume =
             Math.round(URLFactory.DAILY_WATER_VALUE / (total_minutes / interval))
 
-        val unit = if (spm!!.getBoolean(URLFactory.PERSON_WEIGHT_UNIT)) "ml" else "fl oz"
+        val unit = if (SharedPreferencesManager.weightUnit) "ml" else "fl oz"
 
-        binding.lblMessage.text = sh!!.get_string(R.string.str_goal_consume).replace("$1", "$consume $unit")
+        binding.lblMessage.text =
+            sh!!.get_string(R.string.str_goal_consume)
+                .replace("$1", "$consume $unit")
             .replace("$2", "" + URLFactory.DAILY_WATER_VALUE + " " + unit)
 
-        spm!!.savePreferences(
-            URLFactory.WAKE_UP_TIME,
-            binding.txtWakeupTime.getText().toString().trim { it <= ' ' })
-        spm!!.savePreferences(URLFactory.WAKE_UP_TIME_HOUR, from_hour)
-        spm!!.savePreferences(URLFactory.WAKE_UP_TIME_MINUTE, from_minute)
+        SharedPreferencesManager.wakeUpTime = binding.txtWakeupTime.
+        getText().toString().trim { it <= ' ' }
+        SharedPreferencesManager.wakeUpTimeHour = from_hour
+        SharedPreferencesManager.wakeUpTimeMinute = from_minute
 
-        spm!!.savePreferences(
-            URLFactory.BED_TIME,binding.txtBedTime.getText().toString().trim { it <= ' ' })
-        spm!!.savePreferences(URLFactory.BED_TIME_HOUR, to_hour)
-        spm!!.savePreferences(URLFactory.BED_TIME_MINUTE, to_minute)
+        SharedPreferencesManager.sleepingTime = binding.txtBedTime
+            .getText().toString().trim { it <= ' ' }
+        SharedPreferencesManager.sleepTimeHour = to_hour
+        SharedPreferencesManager.sleepTimeMinute = to_minute
 
-        spm!!.savePreferences(URLFactory.INTERVAL, interval)
+        SharedPreferencesManager.notificationFreq = interval.toFloat()
 
-        if (consume > URLFactory.DAILY_WATER_VALUE) spm!!.savePreferences(
-            URLFactory.IGNORE_NEXT_STEP,
-            true
-        )
-        else if (consume == 0) spm!!.savePreferences(URLFactory.IGNORE_NEXT_STEP, true)
-        else spm!!.savePreferences(URLFactory.IGNORE_NEXT_STEP, false)
+        if (consume > URLFactory.DAILY_WATER_VALUE)
+            SharedPreferencesManager.ignoreNextStep = true
+        else if (consume == 0) SharedPreferencesManager.ignoreNextStep = true
+        else SharedPreferencesManager.ignoreNextStep = false
 
     }
 
