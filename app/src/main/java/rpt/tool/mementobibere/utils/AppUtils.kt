@@ -3,8 +3,10 @@ package rpt.tool.mementobibere.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import kotlin.math.ceil
 
 
@@ -65,6 +67,89 @@ class AppUtils {
             this.visibility = View.VISIBLE
         }
 
+        fun convertUpperCase(appCompatTextView: AppCompatTextView) {
+            appCompatTextView.text =
+                appCompatTextView.text.toString().uppercase(Locale.getDefault())
+        }
+
+        fun getHeightFeetElements(): MutableList<Double>? {
+            val height_feet_elements: MutableList<Double> = ArrayList()
+            height_feet_elements.add(2.0)
+            height_feet_elements.add(2.1)
+            height_feet_elements.add(2.2)
+            height_feet_elements.add(2.3)
+            height_feet_elements.add(2.4)
+            height_feet_elements.add(2.5)
+            height_feet_elements.add(2.6)
+            height_feet_elements.add(2.7)
+            height_feet_elements.add(2.8)
+            height_feet_elements.add(2.9)
+            height_feet_elements.add(2.10)
+            height_feet_elements.add(2.11)
+            height_feet_elements.add(3.0)
+            height_feet_elements.add(3.1)
+            height_feet_elements.add(3.2)
+            height_feet_elements.add(3.3)
+            height_feet_elements.add(3.4)
+            height_feet_elements.add(3.5)
+            height_feet_elements.add(3.6)
+            height_feet_elements.add(3.7)
+            height_feet_elements.add(3.8)
+            height_feet_elements.add(3.9)
+            height_feet_elements.add(3.10)
+            height_feet_elements.add(3.11)
+            height_feet_elements.add(4.0)
+            height_feet_elements.add(4.1)
+            height_feet_elements.add(4.2)
+            height_feet_elements.add(4.3)
+            height_feet_elements.add(4.4)
+            height_feet_elements.add(4.5)
+            height_feet_elements.add(4.6)
+            height_feet_elements.add(4.7)
+            height_feet_elements.add(4.8)
+            height_feet_elements.add(4.9)
+            height_feet_elements.add(4.10)
+            height_feet_elements.add(4.11)
+            height_feet_elements.add(5.0)
+            height_feet_elements.add(5.1)
+            height_feet_elements.add(5.2)
+            height_feet_elements.add(5.3)
+            height_feet_elements.add(5.4)
+            height_feet_elements.add(5.5)
+            height_feet_elements.add(5.6)
+            height_feet_elements.add(5.7)
+            height_feet_elements.add(5.8)
+            height_feet_elements.add(5.9)
+            height_feet_elements.add(5.10)
+            height_feet_elements.add(5.11)
+            height_feet_elements.add(6.0)
+            height_feet_elements.add(6.1)
+            height_feet_elements.add(6.2)
+            height_feet_elements.add(6.3)
+            height_feet_elements.add(6.4)
+            height_feet_elements.add(6.5)
+            height_feet_elements.add(6.6)
+            height_feet_elements.add(6.7)
+            height_feet_elements.add(6.8)
+            height_feet_elements.add(6.9)
+            height_feet_elements.add(6.10)
+            height_feet_elements.add(6.11)
+            height_feet_elements.add(7.0)
+            height_feet_elements.add(7.1)
+            height_feet_elements.add(7.2)
+            height_feet_elements.add(7.3)
+            height_feet_elements.add(7.4)
+            height_feet_elements.add(7.5)
+            height_feet_elements.add(7.6)
+            height_feet_elements.add(7.7)
+            height_feet_elements.add(7.8)
+            height_feet_elements.add(7.9)
+            height_feet_elements.add(7.10)
+            height_feet_elements.add(7.11)
+            height_feet_elements.add(8.0)
+            return height_feet_elements
+        }
+
 
         val PRIVATE_MODE = 0
         const val THEME_KEY: String = "theme"
@@ -88,6 +173,7 @@ class AppUtils {
         const val CLIMATE_KEY : String = "climate"
         const val SET_CLIMATE_KEY : String = "set_climate"
         const val DATE : String = "date"
+        const val databaseName = "lets_hydrate_app_database.db"
     }
 }
 

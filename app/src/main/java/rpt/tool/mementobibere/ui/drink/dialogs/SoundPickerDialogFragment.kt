@@ -9,12 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import rpt.tool.mementobibere.BaseDialogFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.databinding.DialogSoundPickBinding
-import rpt.tool.mementobibere.utils.URLFactory
-import rpt.tool.mementobibere.utils.data.SoundModel
+import rpt.tool.mementobibere.utils.data.model.SoundModel
 import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
 import rpt.tool.mementobibere.utils.view.adapters.SoundAdapter
 
-class OpenSoundPickerDialogFragment:BaseDialogFragment<DialogSoundPickBinding>(DialogSoundPickBinding::inflate) {
+class SoundPickerDialogFragment:BaseDialogFragment<DialogSoundPickBinding>(DialogSoundPickBinding::inflate) {
 
     var soundAdapter: SoundAdapter? = null
     var lst_sounds: ArrayList<SoundModel> = ArrayList()

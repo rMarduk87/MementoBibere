@@ -107,6 +107,18 @@
         <action
             android:id="@+id/action_userProfileFragment_to_drinkFragment"
             app:destination="@id/DrinkFragment" />
+        <action
+            android:id="@+id/action_UserProfile_to_UserNameDialogFragment"
+            app:destination="@id/UserNameDialogFragment" />
+        <action
+            android:id="@+id/action_UserProfile_to_SetManuallyGoalDialogFragment"
+            app:destination="@id/SetManuallyGoalDialogFragment" />
+        <action
+            android:id="@+id/action_UserProfile_to_UserHeghtDialogFragment"
+            app:destination="@id/UserHeightDialogFragment" />
+        <action
+            android:id="@+id/action_UserProfile_to_UserWeightDialogFragment"
+            app:destination="@id/UserWeghtDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/ReminderFragment"
@@ -153,7 +165,7 @@
     </dialog>
     <dialog
         android:id="@+id/OpenSoundPickerDialogFragment"
-        android:name="rpt.tool.mementobibere.ui.drink.dialogs.OpenSoundPickerDialogFragment"
+        android:name="rpt.tool.mementobibere.ui.drink.dialogs.SoundPickerDialogFragment"
         android:label="OpenSoundPickerDialogFragment">
     </dialog>
     <dialog
@@ -171,6 +183,26 @@
         android:id="@+id/DailyMoreThanTargetDialogFragment"
         android:name="rpt.tool.mementobibere.ui.drink.dialogs.DailyMoreThanTargetDialogFragment"
         android:label="DailyMoreThanTargetDialogFragment">
+    </dialog>
+    <dialog
+        android:id="@+id/UserNameDialogFragment"
+        android:name="rpt.tool.mementobibere.ui.userinfo.profile.dialogs.UserNameDialogFragment"
+        android:label="UserNameDialogFragment">
+    </dialog>
+    <dialog
+        android:id="@+id/SetManuallyGoalDialogFragment"
+        android:name="rpt.tool.mementobibere.ui.userinfo.profile.dialogs.SetManuallyGoalDialogFragment"
+        android:label="SetManuallyGoalDialogFragment">
+    </dialog>
+    <dialog
+        android:id="@+id/UserHeightDialogFragment"
+        android:name="rpt.tool.mementobibere.ui.userinfo.profile.dialogs.UserHeightDialogFragment"
+        android:label="UserHeightDialogFragment">
+    </dialog>
+    <dialog
+        android:id="@+id/UserWeightDialogFragment"
+        android:name="rpt.tool.mementobibere.ui.userinfo.profile.dialogs.UserWeightDialogFragment"
+        android:label="UserWeightDialogFragment">
     </dialog>
 
 

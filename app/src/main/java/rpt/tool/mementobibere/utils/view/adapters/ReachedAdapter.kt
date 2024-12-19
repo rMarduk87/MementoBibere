@@ -6,16 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.utils.URLFactory
-import rpt.tool.mementobibere.utils.data.History
-import rpt.tool.mementobibere.utils.data.ReachedGoal
-import rpt.tool.mementobibere.utils.extensions.equalsIgnoreCase
+import rpt.tool.mementobibere.utils.data.model.ReachedGoal
 
 @SuppressLint("NewApi")
 class ReachedAdapter(

@@ -1,4 +1,4 @@
-package rpt.tool.mementobibere.utils.data
+package rpt.tool.mementobibere.utils.data.model
 
 class IntervalModel {
     var id: Int = 0

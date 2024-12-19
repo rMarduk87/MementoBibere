@@ -18,7 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import rpt.tool.mementobibere.MainActivity
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.ScreenSelectBottleActivity
+import rpt.tool.mementobibere.SelectBottleActivity
 import rpt.tool.mementobibere.SelectSnoozeActivity
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Date_Helper
@@ -59,7 +59,7 @@ internal class NotificationHelper(private val mContext: Context) {
         val snoozePendingIntent: PendingIntent =
             PendingIntent.getActivity(mContext, 0, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val addWaterIntent = Intent(mContext, ScreenSelectBottleActivity::class.java)
+        val addWaterIntent = Intent(mContext, SelectBottleActivity::class.java)
         addWaterIntent.setAction("ADD_WATER_ACTION")
         addWaterIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val addWaterPendingIntent: PendingIntent = PendingIntent.getActivity(

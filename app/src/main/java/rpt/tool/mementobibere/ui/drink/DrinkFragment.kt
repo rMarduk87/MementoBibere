@@ -40,9 +40,9 @@ import rpt.tool.mementobibere.databinding.FragmentDrinkBinding
 import rpt.tool.mementobibere.utils.AppUtils
 import rpt.tool.mementobibere.utils.URLFactory
 import rpt.tool.mementobibere.utils.custom.InputFilterWeightRange
-import rpt.tool.mementobibere.utils.data.Container
-import rpt.tool.mementobibere.utils.data.Menu
-import rpt.tool.mementobibere.utils.data.NextReminderModel
+import rpt.tool.mementobibere.utils.data.model.Container
+import rpt.tool.mementobibere.utils.data.model.Menu
+import rpt.tool.mementobibere.utils.data.model.NextReminderModel
 import rpt.tool.mementobibere.utils.helpers.HeightWeightHelper.mlToOzConverter
 import rpt.tool.mementobibere.utils.helpers.HeightWeightHelper.ozToMlConverter
 import rpt.tool.mementobibere.utils.log.d
@@ -186,9 +186,9 @@ class DrinkFragment :
                     initialValues.put("BloodDonorDate", "" + avis)
                     dh!!.INSERT("tbl_blood_donor", initialValues)
                     if (sdf.format(calendar.time) == dateNow) {
-                        if (SharedPreferencesManager.dailyWater < 2000f) {
-                            SharedPreferencesManager.dailyWater = 2000f
-                            URLFactory.DAILY_WATER_VALUE = 2000f
+                        if (SharedPreferencesManager.dailyWater < 3000f) {
+                            SharedPreferencesManager.dailyWater = 3000f
+                            URLFactory.DAILY_WATER_VALUE = 3000f
                         }
                     }
                 },

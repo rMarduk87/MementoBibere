@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.utils.data.BackUpFileModel
+import rpt.tool.mementobibere.utils.data.model.BackUpFileModel
 
 @SuppressLint("NewApi")
 class FileAdapter(var mContext: Context, files: List<BackUpFileModel>, var callBack: CallBack) :

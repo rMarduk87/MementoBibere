@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.utils.data.AlarmModel
+import rpt.tool.mementobibere.utils.data.model.AlarmModel
 import rpt.tool.mementobibere.utils.extensions.equalsIgnoreCase
 import java.util.Locale
 

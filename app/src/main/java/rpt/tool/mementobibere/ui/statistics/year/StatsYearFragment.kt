@@ -34,7 +34,7 @@ import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.databinding.FragmentStatsYearBinding
 import rpt.tool.mementobibere.utils.URLFactory
-import rpt.tool.mementobibere.utils.data.History
+import rpt.tool.mementobibere.utils.data.model.History
 import rpt.tool.mementobibere.utils.log.d
 import rpt.tool.mementobibere.utils.log.e
 import rpt.tool.mementobibere.utils.log.i

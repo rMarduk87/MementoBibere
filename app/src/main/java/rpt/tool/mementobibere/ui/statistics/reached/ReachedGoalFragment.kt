@@ -10,7 +10,7 @@ import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.databinding.FragmentReachedBinding
-import rpt.tool.mementobibere.utils.data.ReachedGoal
+import rpt.tool.mementobibere.utils.data.model.ReachedGoal
 import rpt.tool.mementobibere.utils.log.i
 import rpt.tool.mementobibere.utils.navigation.safeNavController
 import rpt.tool.mementobibere.utils.navigation.safeNavigate

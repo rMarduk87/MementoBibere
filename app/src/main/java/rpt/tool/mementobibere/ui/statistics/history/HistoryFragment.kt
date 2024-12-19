@@ -11,7 +11,7 @@ import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.databinding.FragmentHistoryBinding
 import rpt.tool.mementobibere.utils.URLFactory
-import rpt.tool.mementobibere.utils.data.History
+import rpt.tool.mementobibere.utils.data.model.History
 import rpt.tool.mementobibere.utils.log.i
 import rpt.tool.mementobibere.utils.navigation.safeNavController
 import rpt.tool.mementobibere.utils.navigation.safeNavigate

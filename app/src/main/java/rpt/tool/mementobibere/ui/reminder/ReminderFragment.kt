@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ContentValues
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,18 +16,15 @@ import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import com.wdullaer.materialdatetimepicker.time.Timepoint
 import rpt.tool.mementobibere.BaseFragment
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.databinding.FragmentReminderBinding
-import rpt.tool.mementobibere.ui.drink.dialogs.ReminderDialogFragmentDirections
-import rpt.tool.mementobibere.ui.drink.dialogs.ReminderDialogFragmentDirections.Companion.actionReminderDialogFragmentToOpenSoundPickerDialogFragment
-import rpt.tool.mementobibere.utils.data.AlarmModel
-import rpt.tool.mementobibere.utils.data.IntervalModel
-import rpt.tool.mementobibere.utils.data.SoundModel
+import rpt.tool.mementobibere.utils.data.model.AlarmModel
+import rpt.tool.mementobibere.utils.data.model.IntervalModel
+import rpt.tool.mementobibere.utils.data.model.SoundModel
 import rpt.tool.mementobibere.utils.log.d
 import rpt.tool.mementobibere.utils.log.e
 import rpt.tool.mementobibere.utils.managers.SharedPreferencesManager
@@ -39,7 +35,6 @@ import rpt.tool.mementobibere.utils.receiver.MyAlarmManager.scheduleAutoRecurrin
 import rpt.tool.mementobibere.utils.receiver.MyAlarmManager.scheduleManualRecurringAlarm
 import rpt.tool.mementobibere.utils.view.adapters.AlarmAdapter
 import rpt.tool.mementobibere.utils.view.adapters.IntervalAdapter
-import rpt.tool.mementobibere.utils.view.adapters.SoundAdapter
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar

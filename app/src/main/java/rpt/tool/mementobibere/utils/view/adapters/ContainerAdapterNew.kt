@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import rpt.tool.mementobibere.R
 import rpt.tool.mementobibere.utils.URLFactory
-import rpt.tool.mementobibere.utils.data.Container
+import rpt.tool.mementobibere.utils.data.model.Container
 import rpt.tool.mementobibere.utils.extensions.equalsIgnoreCase
 
 

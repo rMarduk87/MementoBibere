@@ -1,4 +1,4 @@
-package rpt.tool.mementobibere.utils.data
+package rpt.tool.mementobibere.utils.data.model
 
 class SoundModel {
     var id: Int = 0

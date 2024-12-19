@@ -291,6 +291,7 @@
     <string name="faq_question_11">What if I added drink log by mistake?</string>
     <string name="faq_question_12">How to change weather?</string>
     <string name="faq_question_13">How to change active / pregnant / breastfeeding status?</string>
+    <string name="faq_question_14">I am a blood donor, are there any specific precautions?</string>
 
 
     <string name="faq_answer_1">There are several reasons. You may check settings as follows:\n1. Did you set reminder start &amp; end time appropriately?\n2. Have you enabled Let\'s hydrate to auto-start on your phone?\n3. Have you installed third-party apps like CleanMaster which may prohibit Water Diary running in the background and send notifications?\n4. Have you turned off the reminder?\n5. Have you set Let\'s Hydrate to \"Don\'t optimize\" on your phone\'s Battery optimization settings?</string>
@@ -306,6 +307,7 @@
     <string name="faq_answer_11">You need to tap on menu and select \"Drink History\" from the list of menu options. Inside Drink History you can tap on delete icon against wrong drink log entry.</string>
     <string name="faq_answer_12">You need to tap on menu and select \"Settings\" from the list of menu options. Inside Settings, you can change weather by clicking on \"My Profile\".</string>
     <string name="faq_answer_13">You need to tap on menu and select \"Settings\" from the list of menu options. Inside Settings, you can change active / pregnant / breastfeeding status by clicking on \"My Profile\".</string>
+    <string name="faq_answer_14">Yes, the day before the donation and on the day itself, the recommendation is to drink at least 3 litres of water, the notifications will have double the frequency</string>
 
     <!--Read More and Read Less-->
     <string name="str_read_less">Read Less</string>
@@ -328,6 +330,7 @@
     <string name="str_no_reached_goal_found">No Reached Goal Found!!!</string>
     <string name="str_add_reached">Want to add more dates when you reached your daily goal?</string>
     <string name="str_reached_remove_confirm_message">Are you sure? Do you want to delete reached goal log?</string>
+    <string name="blood_donor">Blood Donor</string>
 
     <!-- Country Code -->
     <string-array name="CountryCodes" >

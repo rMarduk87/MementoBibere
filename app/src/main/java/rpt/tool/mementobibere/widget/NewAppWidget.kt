@@ -10,7 +10,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.widget.RemoteViews
 import rpt.tool.mementobibere.R
-import rpt.tool.mementobibere.ScreenSelectBottleActivity
+import rpt.tool.mementobibere.SelectBottleActivity
 import rpt.tool.mementobibere.SplashScreenActivity
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Constant
 import rpt.tool.mementobibere.basic.appbasiclibs.utils.Date_Helper
@@ -64,7 +64,7 @@ class NewAppWidget : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.widget, pendingMainIntent)
 
 
-            val launchMain2: Intent = Intent(context, ScreenSelectBottleActivity::class.java)
+            val launchMain2: Intent = Intent(context, SelectBottleActivity::class.java)
             launchMain2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             val pendingMainIntent2: PendingIntent =
                 PendingIntent.getActivity(context, 0, launchMain2, PendingIntent.FLAG_IMMUTABLE)
